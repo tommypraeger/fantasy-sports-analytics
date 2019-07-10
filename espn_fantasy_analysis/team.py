@@ -4,3 +4,5 @@ class Team(object):
         self.id = teamInfo['id']
         self.scores = []
         self.averageScore = 0
+        self.scoreStdDev = 0
+        self.opponents = []

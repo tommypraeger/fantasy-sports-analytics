@@ -16,10 +16,12 @@ class League(object):
         self.espn_s2 = leagueInfo['espn_s2']
         self.schedule = []
         self.teamMap = {}
+        self.currMatchupAmt = 0
         self.totalMatchups = 0
         self.numTeams = 0
 
     def fetchLeague(self):
+        '''Load league and set metadata for league and teams'''
         # ESPN's API URL
         url = 'https://fantasy.espn.com/apis/v3/games/{}/seasons/{}/segments/0/leagues/{}?view=mMatchupScore&view=mStatus&view=mSettings&view=mTeam&view=modular&view=mNav'.format(sportMap[self.sport],self.year,self.id)
         
@@ -55,3 +57,12 @@ class League(object):
             # Set some variables
             self.numTeams = len(teams)
             self.totalMatchups = respJson['settings']['scheduleSettings']['matchupPeriodCount']
+            self.currMatchupAmt = self.getCurrMatchupAmt()
+
+    def getCurrMatchupAmt(self):
+        '''Get current number of matchups played'''
+        for matchup in self.schedule:
+            # Current and future matchups have the winner field as UNDECIDED
+            if matchup['winner'] != 'UNDECIDED':
+                continue
+            return matchup['matchupPeriodId'] - 1
