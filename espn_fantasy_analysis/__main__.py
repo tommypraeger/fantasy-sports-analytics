@@ -41,7 +41,7 @@ def collectFields():
 
 try:
     # First try to read config.txt
-    config = open('myconfig.txt')
+    config = open('config.txt')
     # lines = a 2 element list field and value for each line of config.txt
     lines = [[word.strip() for word in line.split('=')] for line in config.readlines()]
     for line in lines:
