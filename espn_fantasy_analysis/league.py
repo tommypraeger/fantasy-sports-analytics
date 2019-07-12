@@ -63,7 +63,7 @@ class League(object):
                 Team.getMetadata(teamObj, self)
                 self.teams.append(teamObj)
                 self.teamMap[team['id']] = teamObj
-                print(teamObj.name, teamObj.wins, teamObj.averageScore, teamObj.opponents, sep='\n', end='\n---------\n')
+                print(teamObj.name, teamObj.wins, teamObj.averageScore, teamObj.opponents, teamObj.scores, sep='\n', end='\n---------\n')
 
     def getCurrMatchupsPlayed(self):
         '''Get current number of matchups played'''

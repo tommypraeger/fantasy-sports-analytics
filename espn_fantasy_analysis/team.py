@@ -20,7 +20,7 @@ class Team(object):
 
     def getMetadata(self, league):
         self.getMatchups(league)
-        self.averageScore = self.getAverageScore(league.currMatchupsPlayed)
+        self.averageScore = self.getScores(league.currMatchupsPlayed)
         self.getOpponents()
 
     def getMatchups(self, league):
@@ -28,21 +28,29 @@ class Team(object):
             if matchup['away']['teamId'] == self.id or matchup['home']['teamId'] == self.id:
                 self.matchups.append(matchup)
 
-    def getAverageScore(self, currMatchupsPlayed):
+    def getScores(self, currMatchupsPlayed):
         totalPoints = 0
         for matchup in self.matchups:
             if matchup['matchupPeriodId'] > currMatchupsPlayed:
                 break
             if matchup['away']['teamId'] == self.id:
                 try:
-                    totalPoints += self.scoreMultipliers[matchup['matchupPeriodId']]*matchup['away']['totalPoints']
+                    score = self.scoreMultipliers[matchup['matchupPeriodId']]*matchup['away']['totalPoints']
+                    totalPoints += score
+                    self.scores.append(score)
                 except KeyError:
-                    totalPoints += matchup['away']['totalPoints']
+                    score = matchup['away']['totalPoints']
+                    totalPoints += score
+                    self.scores.append(score)
             elif matchup['home']['teamId'] == self.id:
                 try:
-                    totalPoints += self.scoreMultipliers[matchup['matchupPeriodId']]*matchup['home']['totalPoints']
+                    score = self.scoreMultipliers[matchup['matchupPeriodId']]*matchup['home']['totalPoints']
+                    totalPoints += score
+                    self.scores.append(score)
                 except KeyError:
-                    totalPoints += matchup['home']['totalPoints']
+                    score = matchup['home']['totalPoints']
+                    totalPoints += score
+                    self.scores.append(score)
             else:
                 raise Exception('Failed sanity check. getMatchups returned a matchup team {} isn\'t in'.format(self.id))
         return totalPoints/currMatchupsPlayed
