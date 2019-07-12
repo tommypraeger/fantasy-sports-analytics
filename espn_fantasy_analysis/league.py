@@ -16,7 +16,7 @@ class League(object):
         self.espn_s2 = leagueInfo['espn_s2']
         self.schedule = []
         self.teamMap = {}
-        self.currMatchupAmt = 0
+        self.currMatchupsPlayed = 0
         self.totalMatchups = 0
         self.numTeams = 0
 
@@ -36,7 +36,7 @@ class League(object):
         if resp.status_code != 200:
             raise Exception('Error 401: Unauthorized. Did you forget to set the SWID and/or espn_s2?')
         else:
-            # Reset these in this called multiple times for some reason
+            # Reset these if this is called multiple times for some reason
             self.teams = []
             self.teamMap = {}
 
@@ -46,20 +46,26 @@ class League(object):
             # Set the schedule dictionary
             self.schedule = respJson['schedule']
 
-            # Fill the teams array with Team objects
+            # Set some metadata variables
+            self.totalMatchups = respJson['settings']['scheduleSettings']['matchupPeriodCount']
+            self.currMatchupsPlayed = self.getCurrMatchupsPlayed()
+
+            # Can't do analysis with less than 2 games played
+            if self.currMatchupsPlayed < 2:
+                raise Exception("There must have been at least 2 matchups played already.")
+
+            # Fill in team metadata
             # Also create a map from ESPN's internal team id to team object
             teams = respJson['teams']
+            self.numTeams = len(teams)
             for team in teams:
                 teamObj = Team(team)
+                Team.getMetadata(teamObj, self)
                 self.teams.append(teamObj)
                 self.teamMap[team['id']] = teamObj
-            
-            # Set some variables
-            self.numTeams = len(teams)
-            self.totalMatchups = respJson['settings']['scheduleSettings']['matchupPeriodCount']
-            self.currMatchupAmt = self.getCurrMatchupAmt()
+                print(teamObj.name, teamObj.wins, teamObj.averageScore, teamObj.opponents, sep='\n', end='\n---------\n')
 
-    def getCurrMatchupAmt(self):
+    def getCurrMatchupsPlayed(self):
         '''Get current number of matchups played'''
         for matchup in self.schedule:
             # Current and future matchups have the winner field as UNDECIDED
