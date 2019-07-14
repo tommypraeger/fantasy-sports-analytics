@@ -61,5 +61,10 @@ except FileNotFoundError:
     print('Looks like you deleted the config.txt file (or something like that). That\'s ok, I\'ll just ask you for the information individually.')
     collectFields()
 
+print('Fetching league data...')
 league = League(fields)
 league.fetchLeague()
+
+print('Doing calculations...')
+league.performTeamAnalysis()
+league.performLeagueAnalysis()

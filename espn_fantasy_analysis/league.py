@@ -1,5 +1,6 @@
 import requests
 from team import Team
+import analysis
 
 sportMap = {
     'football':'ffl',
@@ -15,6 +16,7 @@ class League(object):
         self.swid = leagueInfo['swid']
         self.espn_s2 = leagueInfo['espn_s2']
         self.schedule = []
+        self.teams = []
         self.teamMap = {}
         self.currMatchupsPlayed = 0
         self.totalMatchups = 0
@@ -36,10 +38,6 @@ class League(object):
         if resp.status_code != 200:
             raise Exception('Error 401: Unauthorized. Did you forget to set the SWID and/or espn_s2?')
         else:
-            # Reset these if this is called multiple times for some reason
-            self.teams = []
-            self.teamMap = {}
-
             # Convert returned value to JSON
             respJson = resp.json()
 
@@ -63,7 +61,25 @@ class League(object):
                 Team.getMetadata(teamObj, self)
                 self.teams.append(teamObj)
                 self.teamMap[team['id']] = teamObj
-                print(teamObj.name, teamObj.wins, teamObj.averageScore, teamObj.opponents, teamObj.scores, sep='\n', end='\n---------\n')
+
+    def performTeamAnalysis(self):
+        '''Perform all the statistics and analysis for each team'''
+        for team in self.teams:
+            self.analyzeTeam(team)
+            print(team.name, team.wins, team.averageScore, team.scoreStdDev, team.matchups, sep='\n', end='\n---------\n')
+
+    def analyzeTeam(self, team):
+        '''Calculate win expectancies'''
+        analysis.getWinLikelihoods(self, team)
+        analysis.getWinTotalProbs(self, team)
+
+    def performLeagueAnalysis(self):
+        '''Aggregate team analysis for league page'''
+        pass
+
+    def getTeam(self, teamId):
+        '''Return a team object given a team id'''
+        return self.teamMap[teamId]
 
     def getCurrMatchupsPlayed(self):
         '''Get current number of matchups played'''
