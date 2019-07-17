@@ -58,7 +58,7 @@ class League(object):
             self.numTeams = len(teams)
             for team in teams:
                 teamObj = Team(team)
-                Team.getMetadata(teamObj, self)
+                teamObj.getMetadata(self)
                 self.teams.append(teamObj)
                 self.teamMap[team['id']] = teamObj
 
@@ -66,7 +66,7 @@ class League(object):
         '''Perform all the statistics and analysis for each team'''
         for team in self.teams:
             self.analyzeTeam(team)
-            print(team.name, team.wins, team.averageScore, team.scoreStdDev, team.matchups, sep='\n', end='\n---------\n')
+            print(team.name, team.wins, team.averageScore, team.scoreStdDev, team.matchups, team.winTotalProbs, team.winLikelihoods, sep='\n', end='\n---------\n')
 
     def analyzeTeam(self, team):
         '''Calculate win expectancies'''

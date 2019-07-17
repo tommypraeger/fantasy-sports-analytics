@@ -1,4 +1,4 @@
-import stats
+from analysis import stdDev
 
 class Team(object):
     def __init__(self, teamInfo):
@@ -10,6 +10,7 @@ class Team(object):
         self.matchups = []
         self.wins = teamInfo['record']['overall']['wins']
         self.winLikelihoods = []
+        self.winTotalProbs = []
 
         # This should be empty for football, but some fantasy baseball matchups are longer than 1 week and need to be scaled down
         # This dictionary should map from week number to multiplier
@@ -83,4 +84,4 @@ class Team(object):
     # Adj std dev = std dev * (n+1)/n, where n is the number of games played
     def getAdjStdDev(self, currMatchupsPlayed):
         '''Get adjusted standard deviation of score for a team'''
-        return round(stats.stdDev(self.scores)*(currMatchupsPlayed+1)/currMatchupsPlayed, 2)
+        return round(stdDev(self.scores)*(currMatchupsPlayed+1)/currMatchupsPlayed, 2)
