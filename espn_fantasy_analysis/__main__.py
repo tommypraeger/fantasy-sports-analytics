@@ -1,4 +1,5 @@
 from league import League
+import export
 
 fields = {
     'sport':None,
@@ -58,7 +59,7 @@ try:
         collectFields()
 except FileNotFoundError:
     # In case I can't open config.txt
-    print('Looks like you deleted the config.txt file (or something like that). That\'s ok, I\'ll just ask you for the information individually.')
+    print('\nLooks like you deleted the config.txt file (or something like that). That\'s ok, I\'ll just ask you for the information individually.')
     collectFields()
 
 print('Fetching league data...')
@@ -68,3 +69,9 @@ league.fetchLeague()
 print('Doing calculations...')
 league.performTeamAnalysis()
 league.performLeagueAnalysis()
+league.teams.sort(key=lambda team: sum(team.winLikelihoods[:league.currMatchupsPlayed]), reverse=True)
+
+print('Exporting data to csv...')
+export.exportLeague(league)
+for team in league.teams:
+    export.exportTeam(team)

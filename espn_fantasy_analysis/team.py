@@ -9,8 +9,12 @@ class Team(object):
         self.scoreStdDev = 0
         self.matchups = []
         self.wins = teamInfo['record']['overall']['wins']
+        self.opponents = []
+        self.opponentAverageScores = []
+        self.opponentStdDevs = []
         self.winLikelihoods = []
         self.winTotalProbs = []
+        self.futureWinTotalProbs = []
 
         # This should be empty for football, but some fantasy baseball matchups are longer than 1 week and need to be scaled down
         # This dictionary should map from week number to multiplier
@@ -40,7 +44,7 @@ class Team(object):
     def getScore(self, matchup, currMatchupsPlayed):
         '''Get score for a matchup'''
         if matchup['matchupPeriodId'] > currMatchupsPlayed:
-            return 0
+            return None
         # First check if there is a score multiplier
         if matchup['away']['teamId'] == self.id:
             try:
@@ -72,10 +76,14 @@ class Team(object):
         else:
             raise Exception('Failed sanity check. getMatchups returned a matchup team {} isn\'t in'.format(self.id))
 
+    def getOpponents(self, league):
+        '''Get opponents for a team'''
+        self.opponents = [league.getTeam(matchup['opponent']) for matchup in self.matchups]
+
     def getAverageScore(self, currMatchupsPlayed):
         '''Get average score for a team'''
         totalScore = 0
-        for matchup in self.matchups:
+        for matchup in self.matchups[:currMatchupsPlayed]:
             totalScore += matchup['score']
         return round(totalScore/currMatchupsPlayed, 2)
 
