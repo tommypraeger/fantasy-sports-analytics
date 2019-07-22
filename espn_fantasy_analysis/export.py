@@ -16,6 +16,8 @@ def exportLeague(league):
     leagueDict['Average Score'] = [team.averageScore for team in league.teams]
     df = pd.DataFrame(leagueDict)
     df.to_csv('csv/league.csv', index=False)#, quoting=QUOTE_NONE)
+    df.to_html('index.html', index=False)
+    #df.to_html('index.html', index=False)
 
 def exportTeam(team):
     '''Export team data to csvs'''

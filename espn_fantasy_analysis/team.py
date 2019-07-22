@@ -35,7 +35,7 @@ class Team(object):
         '''Get matchups for a team'''
         for matchupJson in league.schedule:
             # Only get regular season matchups
-            if matchupJson['matchupPeriodId'] > league.currMatchupsPlayed:
+            if matchupJson['matchupPeriodId'] > league.totalMatchups:
                 break
             if matchupJson['away']['teamId'] == self.id or matchupJson['home']['teamId'] == self.id:
                 matchup = {}
