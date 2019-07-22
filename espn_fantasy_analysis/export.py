@@ -10,7 +10,7 @@ def exportLeague(league):
     leagueDict['Expected Wins'] = [round(sum(team.winLikelihoods[:league.currMatchupsPlayed]), 2) for team in league.teams]
     leagueDict['Expected Losses'] = [round(league.currMatchupsPlayed - sum(team.winLikelihoods[:league.currMatchupsPlayed]), 2) for team in league.teams]
     leagueDict['Actual Wins'] = [team.wins for team in league.teams]
-    leagueDict['Differential'] = [round(sum(team.winLikelihoods[:league.currMatchupsPlayed]) - team.wins, 2) for team in league.teams]
+    leagueDict['Differential'] = [round(team.wins - sum(team.winLikelihoods[:league.currMatchupsPlayed]), 2) for team in league.teams]
     leagueDict['Projected Wins'] = [round(team.wins + sum(team.winLikelihoods[league.currMatchupsPlayed:]), 2) for team in league.teams]
     leagueDict['Projected Losses'] = [round(league.totalMatchups - team.wins - sum(team.winLikelihoods[league.currMatchupsPlayed:]), 2) for team in league.teams]
     leagueDict['Average Score'] = [team.averageScore for team in league.teams]

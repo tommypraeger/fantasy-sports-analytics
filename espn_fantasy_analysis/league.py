@@ -89,4 +89,8 @@ class League(object):
             # Current and future matchups have the winner field as UNDECIDED
             if matchup['winner'] != 'UNDECIDED':
                 continue
+            # If matchup is a playoff matchup, all regular season matchups have been played
+            if matchup['matchupPeriodId'] > self.totalMatchups:
+                break
             return matchup['matchupPeriodId'] - 1
+        return self.totalMatchups
