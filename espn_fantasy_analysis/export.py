@@ -1,55 +1,55 @@
 import pandas as pd
 import re
 
-def exportLeague(league):
+def export_league(league):
     '''Export league data to csv'''
-    leagueDict = {}
+    league_dict = {}
     # Create all the columns in the table
-    leagueDict['Expected Standings'] = list(range(1,league.numTeams+1))
-    leagueDict['Team Name'] = [team.name for team in league.teams]
-    leagueDict['Expected Wins'] = [round(sum(team.winLikelihoods[:league.currMatchupsPlayed]), 2) for team in league.teams]
-    leagueDict['Expected Losses'] = [round(league.currMatchupsPlayed - sum(team.winLikelihoods[:league.currMatchupsPlayed]), 2) for team in league.teams]
-    leagueDict['Actual Wins'] = [team.wins for team in league.teams]
-    leagueDict['Differential'] = [round(team.wins - sum(team.winLikelihoods[:league.currMatchupsPlayed]), 2) for team in league.teams]
-    leagueDict['Projected Wins'] = [round(team.wins + sum(team.winLikelihoods[league.currMatchupsPlayed:]), 2) for team in league.teams]
-    leagueDict['Projected Losses'] = [round(league.totalMatchups - team.wins - sum(team.winLikelihoods[league.currMatchupsPlayed:]), 2) for team in league.teams]
-    leagueDict['Average Score'] = [team.averageScore for team in league.teams]
-    df = pd.DataFrame(leagueDict)
+    league_dict['Expected Standings'] = list(range(1,league.num_teams+1))
+    league_dict['Team Name'] = [team.name for team in league.teams]
+    league_dict['Expected Wins'] = [round(sum(team.win_likelihoods[:league.curr_matchups_played]), 2) for team in league.teams]
+    league_dict['Expected Losses'] = [round(league.curr_matchups_played - sum(team.win_likelihoods[:league.curr_matchups_played]), 2) for team in league.teams]
+    league_dict['Actual Wins'] = [team.wins for team in league.teams]
+    league_dict['Differential'] = [round(team.wins - sum(team.win_likelihoods[:league.curr_matchups_played]), 2) for team in league.teams]
+    league_dict['Projected Wins'] = [round(team.wins + sum(team.win_likelihoods[league.curr_matchups_played:]), 2) for team in league.teams]
+    league_dict['Projected Losses'] = [round(league.total_matchups - team.wins - sum(team.win_likelihoods[league.curr_matchups_played:]), 2) for team in league.teams]
+    league_dict['Average Score'] = [team.average_score for team in league.teams]
+    df = pd.DataFrame(league_dict)
     df.to_csv('csv/league.csv', index=False)#, quoting=QUOTE_NONE)
     df.to_html('index.html', index=False)
     #df.to_html('index.html', index=False)
 
-def exportTeam(team):
+def export_team(team):
     '''Export team data to csvs'''
-    exportMatchupStats(team)
-    exportWinTotalProbs(team)
+    export_matchup_stats(team)
+    export_win_total_probs(team)
 
-def exportMatchupStats(team):
+def export_matchup_stats(team):
     '''Export matchup stats to csv'''
-    teamDict = {}
-    totalMatchups = len(team.winLikelihoods)
+    team_dict = {}
+    total_matchups = len(team.win_likelihoods)
     # Create all the columns in the table
-    teamDict['Week'] = list(range(1,totalMatchups+1))
-    teamDict['Points For'] = padList(team.scores, totalMatchups)
-    teamDict['Opponent'] = [opponent.name for opponent in team.opponents]
-    teamDict['Opponent Average Score'] = team.opponentAverageScores
-    teamDict['Opponent Adjusted Standard Deviations'] = team.opponentStdDevs
-    teamDict['Expected Win Percentage'] = [round(prob*100, 2) for prob in team.winLikelihoods]
-    df = pd.DataFrame(teamDict)
+    team_dict['Week'] = list(range(1,total_matchups+1))
+    team_dict['Points For'] = pad_list(team.scores, total_matchups)
+    team_dict['Opponent'] = [opponent.name for opponent in team.opponents]
+    team_dict['Opponent Average Score'] = team.opponent_average_scores
+    team_dict['Opponent Adjusted Standard Deviations'] = team.opponent_std_devs
+    team_dict['Expected Win Percentage'] = [round(prob*100, 2) for prob in team.win_likelihoods]
+    df = pd.DataFrame(team_dict)
     name = re.sub(r'[^\w\s]', '', team.name)
     df.to_csv('csv/{}_matchup_data.csv'.format(name.replace(' ', '_')), index=False)
 
-def exportWinTotalProbs(team):
+def export_win_total_probs(team):
     '''Export win total probabilities to csv'''
-    teamDict = {}
-    totalMatchups = len(team.winLikelihoods)
+    team_dict = {}
+    total_matchups = len(team.win_likelihoods)
     # Create all the columns in the table
-    teamDict['Amount of wins'] = list(range(totalMatchups+1))
-    teamDict['Percent chance of currently having this many wins'] = padList([round(prob*100, 2) for prob in team.winTotalProbs], totalMatchups+1)
-    teamDict['Percent chance of ending with this many wins'] = [round(prob*100, 2) for prob in team.futureWinTotalProbs]
-    df = pd.DataFrame(teamDict)
+    team_dict['Amount of wins'] = list(range(total_matchups+1))
+    team_dict['Percent chance of currently having this many wins'] = pad_list([round(prob*100, 2) for prob in team.win_total_probs], total_matchups+1)
+    team_dict['Percent chance of ending with this many wins'] = [round(prob*100, 2) for prob in team.future_win_total_probs]
+    df = pd.DataFrame(team_dict)
     name = re.sub(r'[^\w\s]', '', team.name)
     df.to_csv('csv/{}_win_total_probabilities.csv'.format(name.replace(' ', '_')), index=False)
 
-def padList(_list, length):
+def pad_list(_list, length):
     return _list + [''] * (length - len(_list))

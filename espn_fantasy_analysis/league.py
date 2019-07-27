@@ -8,21 +8,21 @@ sportMap = {
 }
 
 class League(object):
-    def __init__(self, leagueInfo):
+    def __init__(self, league_info):
         '''League metadata and auth info'''
-        self.sport = leagueInfo['sport']
-        self.id = leagueInfo['leagueId']
-        self.year = leagueInfo['year']
-        self.swid = leagueInfo['swid']
-        self.espn_s2 = leagueInfo['espn_s2']
+        self.sport = league_info['sport']
+        self.id = league_info['league_id']
+        self.year = league_info['year']
+        self.swid = league_info['swid']
+        self.espn_s2 = league_info['espn_s2']
         self.schedule = []
         self.teams = []
-        self.teamMap = {}
-        self.currMatchupsPlayed = 0
-        self.totalMatchups = 0
-        self.numTeams = 0
+        self.team_map = {}
+        self.curr_matchups_played = 0
+        self.total_matchups = 0
+        self.num_teams = 0
 
-    def fetchLeague(self):
+    def fetch_league(self):
         '''Load league and set metadata for league and teams'''
         # ESPN's API URL
         url = 'https://fantasy.espn.com/apis/v3/games/{}/seasons/{}/segments/0/leagues/{}?view=mMatchupScore&view=mStatus&view=mSettings&view=mTeam&view=modular&view=mNav'.format(sportMap[self.sport],self.year,self.id)
@@ -39,58 +39,49 @@ class League(object):
             raise Exception('Error 401: Unauthorized. Did you forget to set the SWID and/or espn_s2?')
         else:
             # Convert returned value to JSON
-            respJson = resp.json()
+            resp_json = resp.json()
 
             # Set the schedule dictionary
-            self.schedule = respJson['schedule']
+            self.schedule = resp_json['schedule']
 
             # Set some metadata variables
-            self.totalMatchups = respJson['settings']['scheduleSettings']['matchupPeriodCount']
-            self.currMatchupsPlayed = self.getCurrMatchupsPlayed()
+            self.total_matchups = resp_json['settings']['scheduleSettings']['matchupPeriodCount']
+            self.curr_matchups_played = self.get_curr_matchups_played(resp_json['status']['currentMatchupPeriod'])
 
             # Can't do analysis with less than 2 games played
-            if self.currMatchupsPlayed < 2:
+            if self.curr_matchups_played < 2:
                 raise Exception("There must have been at least 2 matchups played already.")
 
             # Fill in team metadata
             # Also create a map from ESPN's internal team id to team object
-            teams = respJson['teams']
-            self.numTeams = len(teams)
+            teams = resp_json['teams']
+            self.num_teams = len(teams)
             for team in teams:
-                teamObj = Team(team)
-                teamObj.getMetadata(self)
-                self.teams.append(teamObj)
-                self.teamMap[team['id']] = teamObj
+                team_obj = Team(team)
+                team_obj.get_metadata(self)
+                self.teams.append(team_obj)
+                self.team_map[team['id']] = team_obj
             for team in self.teams:
-                team.getOpponents(self)
+                team.get_opponents(self)
 
-    def performTeamAnalysis(self):
+    def perform_team_analysis(self):
         '''Perform all the statistics and analysis for each team'''
         for team in self.teams:
-            self.analyzeTeam(team)
+            self.analyze_team(team)
 
-    def analyzeTeam(self, team):
+    def analyze_team(self, team):
         '''Calculate win expectancies'''
-        analysis.getWinLikelihoods(self, team)
-        analysis.getWinTotalProbs(self, team)
-        analysis.getFutureWinTotalProbs(self, team)
+        analysis.get_win_likelihoods(self, team)
+        analysis.get_win_total_probs(self, team)
+        analysis.get_future_win_total_probs(self, team)
 
-    def performLeagueAnalysis(self):
-        '''Aggregate team analysis for league page'''
-        pass
-
-    def getTeam(self, teamId):
+    def get_team(self, teamId):
         '''Return a team object given a team id'''
-        return self.teamMap[teamId]
+        return self.team_map[teamId]
 
-    def getCurrMatchupsPlayed(self):
+    def get_curr_matchups_played(self, curr_matchup_period):
         '''Get current number of matchups played'''
-        for matchup in self.schedule:
-            # Current and future matchups have the winner field as UNDECIDED
-            if matchup['winner'] != 'UNDECIDED':
-                continue
-            # If matchup is a playoff matchup, all regular season matchups have been played
-            if matchup['matchupPeriodId'] > self.totalMatchups:
-                break
-            return matchup['matchupPeriodId'] - 1
-        return self.totalMatchups
+        if curr_matchup_period > self.total_matchups:
+            return self.total_matchups
+        return curr_matchup_period - 1
+        
