@@ -1,6 +1,9 @@
+import re
+
 import requests
-from team import Team
+
 import analysis
+from team import Team
 
 sportMap = {
     'football':'ffl',
@@ -10,6 +13,7 @@ sportMap = {
 class League(object):
     def __init__(self, league_info):
         '''League metadata and auth info'''
+        self.name = ''
         self.sport = league_info['sport']
         self.id = league_info['league_id']
         self.year = league_info['year']
@@ -38,13 +42,10 @@ class League(object):
         if resp.status_code != 200:
             raise Exception('Error 401: Unauthorized. Did you forget to set the SWID and/or espn_s2?')
         else:
-            # Convert returned value to JSON
             resp_json = resp.json()
 
-            # Set the schedule dictionary
+            self.name = resp_json['settings']['name']
             self.schedule = resp_json['schedule']
-
-            # Set some metadata variables
             self.total_matchups = resp_json['settings']['scheduleSettings']['matchupPeriodCount']
             self.curr_matchups_played = self.get_curr_matchups_played(resp_json['status']['currentMatchupPeriod'])
 
@@ -52,8 +53,6 @@ class League(object):
             if self.curr_matchups_played < 2:
                 raise Exception("There must have been at least 2 matchups played already.")
 
-            # Fill in team metadata
-            # Also create a map from ESPN's internal team id to team object
             teams = resp_json['teams']
             self.num_teams = len(teams)
             for team in teams:
@@ -63,6 +62,7 @@ class League(object):
                 self.team_map[team['id']] = team_obj
             for team in self.teams:
                 team.get_opponents(self)
+            self.teams.sort(key=lambda team: re.sub(r'[^\w\s]', '', team.name))
 
     def perform_team_analysis(self):
         '''Perform all the statistics and analysis for each team'''
@@ -84,4 +84,3 @@ class League(object):
         if curr_matchup_period > self.total_matchups:
             return self.total_matchups
         return curr_matchup_period - 1
-        

@@ -1,8 +1,11 @@
-from scipy.stats import norm
-import numpy as np
 import math
 from functools import reduce
+
+import numpy as np
+from scipy.stats import norm
+
 from poibin import PoiBin
+
 
 def get_win_likelihoods(league, team):
     '''Gets win likelihoods for a team'''

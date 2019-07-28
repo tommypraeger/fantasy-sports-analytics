@@ -21,8 +21,8 @@ class Team(object):
         # e.g. Week 1 was 11 days instead of 7 so I added 1:7/11 to the the dictionary
         # Fill this in as needed
         self.score_multipliers = {
-            1:7/11,
-            14:7/10
+            #1:7/11,
+            #14:7/10
         }
 
     def get_metadata(self, league):

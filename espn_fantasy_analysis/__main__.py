@@ -1,5 +1,9 @@
-from league import League
+import http.server
+import socketserver
+import webbrowser
+
 import export
+from league import League
 
 fields = {
     'sport':None,
@@ -42,7 +46,7 @@ def collect_fields():
 
 try:
     # First try to read config.txt
-    config = open('myconfig.txt')
+    config = open('config.txt')
     # lines = a 2 element list field and value for each line of config.txt
     lines = [[word.strip() for word in line.split('=')] for line in config.readlines()]
     for line in lines:
@@ -71,7 +75,30 @@ league.perform_team_analysis()
 #league.perform_league_analysis()
 league.teams.sort(key=lambda team: sum(team.win_likelihoods[:league.curr_matchups_played]), reverse=True)
 
-print('Exporting data to csv...')
+print('Exporting data to html...')
 export.export_league(league)
 for team in league.teams:
-    export.export_team(team)
+    export.export_team(team, league)
+
+PORT = 8000
+Handler = http.server.SimpleHTTPRequestHandler
+while True:
+    try:
+        httpd = socketserver.TCPServer(("localhost", PORT), Handler)
+        print('Serving website at http://localhost:{}/'.format(PORT))
+        print('ctrl-c to quit server')
+        web_url = 'http://localhost:{}/'.format(PORT)
+        webbrowser.open(web_url)
+        httpd.allow_reuse_address = True
+        httpd.serve_forever()
+    except KeyboardInterrupt:
+        httpd.server_close()
+        print('Server Stopped')
+        break
+    except OSError:
+        PORT += 1
+        print('Server Stopped')
+    except:
+        httpd.server_close()
+        print('Server Stopped')
+        break
