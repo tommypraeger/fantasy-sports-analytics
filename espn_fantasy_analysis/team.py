@@ -16,15 +16,6 @@ class Team(object):
         self.win_total_probs = []
         self.future_win_total_probs = []
 
-        # This should be empty for football, but some fantasy baseball matchups are longer than 1 week and need to be scaled down
-        # This dictionary should map from week number to multiplier
-        # e.g. Week 1 was 11 days instead of 7 so I added 1:7/11 to the the dictionary
-        # Fill this in as needed
-        self.score_multipliers = {
-            #1:7/11,
-            #14:7/10
-        }
-
     def get_metadata(self, league):
         '''Calculate team-specific score data'''
         self.get_matchups(league)
@@ -40,18 +31,18 @@ class Team(object):
             if matchup_json['away']['teamId'] == self.id or matchup_json['home']['teamId'] == self.id:
                 matchup = {}
                 matchup['week'] = matchup_json['matchupPeriodId']
-                matchup['score'] = self.get_score(matchup_json, league.curr_matchups_played)
+                matchup['score'] = self.get_score(matchup_json, league.curr_matchups_played, league.score_multipliers)
                 matchup['opponent'] = self.get_opponent(matchup_json)
                 self.matchups.append(matchup)
 
-    def get_score(self, matchup, curr_matchups_played):
+    def get_score(self, matchup, curr_matchups_played, score_multipliers):
         '''Get score for a matchup'''
         if matchup['matchupPeriodId'] > curr_matchups_played:
             return None
         # First check if there is a score multiplier
         if matchup['away']['teamId'] == self.id:
             try:
-                score = round(self.score_multipliers[matchup['matchupPeriodId']]*matchup['away']['totalPoints'], 2)
+                score = round(score_multipliers[matchup['matchupPeriodId']]*matchup['away']['totalPoints'], 2)
                 self.scores.append(score)
                 return score
             except KeyError:
@@ -60,7 +51,7 @@ class Team(object):
                 return score
         elif matchup['home']['teamId'] == self.id:
             try:
-                score = round(self.score_multipliers[matchup['matchupPeriodId']]*matchup['home']['totalPoints'], 2)
+                score = round(score_multipliers[matchup['matchupPeriodId']]*matchup['home']['totalPoints'], 2)
                 self.scores.append(score)
                 return score
             except KeyError:

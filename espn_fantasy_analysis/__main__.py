@@ -14,7 +14,7 @@ fields = {
 }
 
 input_questions = {
-    'sport':'\nEnter which sport this league is for (football, baseball, or basketball): ',
+    'sport':'\nEnter which sport this league is for (football or baseball): ',
     'league_id':'\nEnter the league ID number for your league (go to your fantasy league and it should show up next to "leagueId=" in the url): ',
     'year':'\nEnter the year this league took place? (if you go to your fantasy team, you might see it in the url next to "seasonId"): ',
     'swid':'\nIf this is a private league, enter your SWID (otherwise just click enter). This is a cookie ESPN uses for authentication (you can find this if you go to https://www.espn.com/ in Chrome and look at cookies for ESPN (click the lock to the left of the url and then click cookies and look for espn.com then look for SWID): ',
@@ -25,7 +25,8 @@ def validate_response(field, response):
     '''Validate that responses are somewhat valid'''
     # sport can only take on these values
     if field == 'sport':
-        return response == 'baseball' or response == 'football' or response == 'basketball'
+        response = response.lower()
+        return response == 'baseball' or response == 'football'
     # league_id and year must be a number at the very least
     elif field == 'league_id' or field == 'year':
         try:
