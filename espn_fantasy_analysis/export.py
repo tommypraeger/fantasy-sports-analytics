@@ -103,7 +103,7 @@ def nav_bar(file_, teams):
     team_links = ['<a href="{}">{}</a>'.format(name_file(team.name), team.name) for team in sorted(teams, key=lambda team_: re.sub(r'[^\w\s]', '', team_.name))]
     nav_bar = '''
     <div class="navbar">
-        <a href="/">Home</a>
+        <a href="home.html">Home</a>
         <div class="dropdown">
             <button class="dropbtn">Teams
                 <i class="fa fa-caret-down"></i>
