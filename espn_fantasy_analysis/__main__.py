@@ -93,9 +93,9 @@ with cd('docs'):
     while True:
         try:
             httpd = socketserver.TCPServer(("localhost", PORT), Handler)
-            print('Serving website at http://localhost:{}/'.format(PORT))
+            print('Serving website at http://localhost:{}/home.html'.format(PORT))
             print('ctrl-c to quit server')
-            web_url = 'http://localhost:{}/'.format(PORT)
+            web_url = 'http://localhost:{}/home.html'.format(PORT)
             webbrowser.open(web_url)
             httpd.allow_reuse_address = True
             httpd.serve_forever()
