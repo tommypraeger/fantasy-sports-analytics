@@ -68,7 +68,6 @@ class League(object):
                 self.team_map[team['id']] = team_obj
             for team in self.teams:
                 team.get_opponents(self)
-            self.teams.sort(key=lambda team: re.sub(r'[^\w\s]', '', team.name))
 
     def get_score_multipliers(self, matchup_json):
         '''Get score adjustments for matchups that are longer than usual'''

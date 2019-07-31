@@ -1,6 +1,8 @@
 import http.server
+import os
 import socketserver
 import webbrowser
+from contextlib import contextmanager
 
 import export
 from league import League
@@ -45,22 +47,26 @@ def collect_fields():
             print('\nThat didn\'t seem to be a valid response. Try again.')
             fields[field] = input(input_questions[field])
 
+# From cdunn2001 on StackOverflow: https://stackoverflow.com/questions/431684/how-do-i-change-directory-cd-in-python/24176022#24176022
+@contextmanager
+def cd(newdir):
+    prevdir = os.getcwd()
+    os.chdir(os.path.expanduser(newdir))
+    try:
+        yield
+    finally:
+        os.chdir(prevdir)
+
 try:
     # First try to read config.txt
-    config = open('config.txt')
+    config = open('myconfig.txt')
     # lines = a 2 element list field and value for each line of config.txt
     lines = [[word.strip() for word in line.split('=')] for line in config.readlines()]
     for line in lines:
         field = line[0]
-        # field must be an expected field and line must have 1 equals sign
-        if field not in fields.keys() or len(line) != 2:
-            print('\nLooks like you haven\'t filled in your config.txt file (at least not correctly).\nI\'ll just ask you for the information individually.')
-            collect_fields()
-            break
         fields[field] = line[1]
-    # In case they deleted these lines from config.txt for some reason
     if not fields['sport'] or not fields['league_id'] or not fields['year']:
-        print('Looks like you\'re missing an essential field.\nI\'ll ask you for the information individually.')
+        print('\nLooks like you haven\'t filled in your config.txt file (at least not correctly).\nI\'ll just ask you for the information individually.')
         collect_fields()
 except FileNotFoundError:
     # In case I can't open config.txt
@@ -81,25 +87,26 @@ export.export_league(league)
 for team in league.teams:
     export.export_team(team, league)
 
-PORT = 8000
-Handler = http.server.SimpleHTTPRequestHandler
-while True:
-    try:
-        httpd = socketserver.TCPServer(("localhost", PORT), Handler)
-        print('Serving website at http://localhost:{}/'.format(PORT))
-        print('ctrl-c to quit server')
-        web_url = 'http://localhost:{}/'.format(PORT)
-        webbrowser.open(web_url)
-        httpd.allow_reuse_address = True
-        httpd.serve_forever()
-    except KeyboardInterrupt:
-        httpd.server_close()
-        print('Server Stopped')
-        break
-    except OSError:
-        PORT += 1
-        print('Server Stopped')
-    except:
-        httpd.server_close()
-        print('Server Stopped')
-        break
+with cd('site'):
+    PORT = 8000
+    Handler = http.server.SimpleHTTPRequestHandler
+    while True:
+        try:
+            httpd = socketserver.TCPServer(("localhost", PORT), Handler)
+            print('Serving website at http://localhost:{}/'.format(PORT))
+            print('ctrl-c to quit server')
+            web_url = 'http://localhost:{}/'.format(PORT)
+            webbrowser.open(web_url)
+            httpd.allow_reuse_address = True
+            httpd.serve_forever()
+        except KeyboardInterrupt:
+            httpd.server_close()
+            print('Server Stopped')
+            break
+        except OSError:
+            PORT += 1
+            print('Server Stopped')
+        except:
+            httpd.server_close()
+            print('Server Stopped')
+            break

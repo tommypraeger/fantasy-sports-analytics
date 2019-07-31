@@ -20,7 +20,7 @@ def export_league(league):
     # Write html file
     df = pd.DataFrame(league_dict)
     league_table = df.to_html(classes="league-table", index=False)
-    index = open('index.html', 'w')
+    index = open('site/index.html', 'w')
     begin_html(index, league.name)
     nav_bar(index, league.teams)
     index.write('<p class="page-title">{} Analysis</p>'.format(league.name))
@@ -30,7 +30,7 @@ def export_league(league):
 
 def export_team(team, league):
     '''Export team data to html files'''
-    file_name = name_file(team.name)
+    file_name = 'site/' + name_file(team.name)
     page_title = team.name
     team_page = open(file_name, 'w')
     begin_html(team_page, page_title)
@@ -40,7 +40,7 @@ def export_team(team, league):
     export_win_total_probs(team, team_page)
     end_html(team_page)
 
-def export_matchup_stats(team, _file):
+def export_matchup_stats(team, file_):
     '''Export matchup stats to html files'''
     team_dict = {}
     total_matchups = len(team.win_likelihoods)
@@ -55,9 +55,9 @@ def export_matchup_stats(team, _file):
     # Write html file
     df = pd.DataFrame(team_dict)
     matchup_table = df.to_html(classes="team-table", index=False)
-    _file.write(matchup_table)
+    file_.write(matchup_table)
 
-def export_win_total_probs(team, _file):
+def export_win_total_probs(team, file_):
     '''Export win total probabilities to csv'''
     team_dict = {}
     total_matchups = len(team.win_likelihoods)
@@ -69,16 +69,16 @@ def export_win_total_probs(team, _file):
     # Write html file
     df = pd.DataFrame(team_dict)
     win_total_probs_table = df.to_html(index=False)
-    _file.write(win_total_probs_table)
+    file_.write(win_total_probs_table)
 
 def name_file(name):
     return re.sub(r'[^\w\s]', '', name).replace(' ', '_') + '.html'
 
-def pad_list(_list, length):
+def pad_list(list_, length):
     '''Pads list with empty strings for table'''
-    return _list + [''] * (length - len(_list))
+    return list_ + [''] * (length - len(list_))
 
-def begin_html(_file, title):
+def begin_html(file_, title):
     '''Writes beginning of html file'''
     html_start = '''
     <html>
@@ -89,18 +89,18 @@ def begin_html(_file, title):
         </head>
     <body>
     '''.format(title)
-    _file.write(html_start)
+    file_.write(html_start)
 
-def end_html(_file):
+def end_html(file_):
     '''Writes end of html file'''
     html_end = '''
             <p class="credit">Created by <a href="https://tommypraeger.github.io" target="_blank">Tommy Praeger</a></p>
         </body>
     </html>'''
-    _file.write(html_end)
+    file_.write(html_end)
 
-def nav_bar(_file, teams):
-    team_links = ['<a href="{}">{}</a>'.format(name_file(team.name), team.name) for team in teams]
+def nav_bar(file_, teams):
+    team_links = ['<a href="{}">{}</a>'.format(name_file(team.name), team.name) for team in sorted(teams, key=lambda team_: re.sub(r'[^\w\s]', '', team_.name))]
     nav_bar = '''
     <div class="navbar">
         <a href="/">Home</a>
@@ -114,4 +114,4 @@ def nav_bar(_file, teams):
         </div> 
     </div>
     '''.format('\n'.join(team_links))
-    _file.write(nav_bar)
+    file_.write(nav_bar)
