@@ -87,7 +87,7 @@ export.export_league(league)
 for team in league.teams:
     export.export_team(team, league)
 
-with cd('site'):
+with cd('docs'):
     PORT = 8000
     Handler = http.server.SimpleHTTPRequestHandler
     while True:

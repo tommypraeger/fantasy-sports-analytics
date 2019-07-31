@@ -20,7 +20,7 @@ def export_league(league):
     # Write html file
     df = pd.DataFrame(league_dict)
     league_table = df.to_html(classes="league-table", index=False)
-    index = open('site/index.html', 'w')
+    index = open('docs/index.html', 'w')
     begin_html(index, league.name)
     nav_bar(index, league.teams)
     index.write('<p class="page-title">{} Analysis</p>'.format(league.name))
@@ -30,7 +30,7 @@ def export_league(league):
 
 def export_team(team, league):
     '''Export team data to html files'''
-    file_name = 'site/' + name_file(team.name)
+    file_name = 'docs/' + name_file(team.name)
     page_title = team.name
     team_page = open(file_name, 'w')
     begin_html(team_page, page_title)
