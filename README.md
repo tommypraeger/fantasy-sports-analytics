@@ -1,4 +1,4 @@
-# ESPN Fantasy League Analysis
+# Fantasy Sports Analytics
 
 ## Installation
 
