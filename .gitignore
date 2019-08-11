@@ -4,4 +4,6 @@ myconfig.txt
 .vscode
 venv
 .ebignore
-#*.html
+node_modules
+.eslintrc.js
+app/static/bundle.js

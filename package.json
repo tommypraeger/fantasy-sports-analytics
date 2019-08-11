@@ -1,0 +1,31 @@
+{
+  "name": "next-level-fantasy",
+  "version": "1.0.0",
+  "description": "Next-level analysis for fantasy sports",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "webpack"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tommypraeger/next-level-fantasy.git"
+  },
+  "author": "Tommy Praeger",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/tommypraeger/next-level-fantasy/issues"
+  },
+  "homepage": "https://github.com/tommypraeger/next-level-fantasy#readme",
+  "devDependencies": {
+    "eslint": "^6.1.0",
+    "eslint-config-airbnb": "^18.0.0",
+    "eslint-plugin-import": "^2.18.2",
+    "eslint-plugin-jsx-a11y": "^6.2.3",
+    "eslint-plugin-react": "^7.14.3",
+    "eslint-plugin-react-hooks": "^1.7.0",
+    "react": "16.9.0",
+    "react-dom": "16.9.0",
+    "react-router-dom": "5.0.1"
+  }
+}

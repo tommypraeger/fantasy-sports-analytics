@@ -9,13 +9,16 @@ from poibin import PoiBin
 
 def get_win_likelihoods(league, team):
     '''Gets win likelihoods for a team'''
+
     for matchup in team.matchups:
+        # Separate win likelihood calculations into past and future
         if matchup['week'] <= league.curr_matchups_played:
             win_likelihood = past_win_likelihood(matchup, league, team)
         else:
             win_likelihood = future_win_likelihood(matchup, league, team.average_score, team.score_std_dev, team)
         team.win_likelihoods.append(win_likelihood)
         matchup['win_likelihood'] = win_likelihood
+
 
 def past_win_likelihood(matchup, league, team):
     '''Win likelihood of a past matchup'''
@@ -27,8 +30,10 @@ def past_win_likelihood(matchup, league, team):
     team.opponent_std_devs.append(opponent_std_dev)
     return round(win_likelihood(score, opponent_average_score, opponent_std_dev), 4)
 
+
 def future_win_likelihood(matchup, league, average_score, std_dev, team):
     '''Win likelihood of a future matchup'''
+
     opponent = league.get_team(matchup['opponent'])
     opponent_average_score = opponent.average_score
     team.opponent_average_scores.append(opponent_average_score)
@@ -37,22 +42,34 @@ def future_win_likelihood(matchup, league, average_score, std_dev, team):
     combined_std_dev = math.sqrt(std_dev**2 + opponent_std_dev**2)
     return round(win_likelihood(average_score, opponent_average_score, combined_std_dev), 4)
 
+
 def std_dev(arr):
     '''Standard deviation of an array of numbers'''
+
     return np.std(arr, ddof=1)
 
+
 def win_likelihood(first, second, std_dev):
-    '''Probalilty that a value will be above 0 given a mean and standard deviation'''
+    '''Returns win likelihood given 2 scores and a standard deviation
+
+    Implemented as determining the probability that the difference
+    between the two scores is greater than 0.
+    '''
+
     return norm.cdf(first - second, 0, std_dev)
+
 
 def get_win_total_probs(league, team):
     '''Gets probabilities of having each possible amount of wins'''
+
     pb = PoiBin(team.win_likelihoods[:league.curr_matchups_played])
     for win_amount in range(league.curr_matchups_played+1):
         team.win_total_probs.append(round(pb.pmf(win_amount), 4))
 
+
 def get_future_win_total_probs(league, team):
     '''Gets probabilities of ending with each possible amount of wins'''
+
     pb = PoiBin(team.win_likelihoods[league.curr_matchups_played:])
     for win_amount in range(team.wins):
         team.future_win_total_probs.append(0)
