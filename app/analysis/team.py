@@ -1,8 +1,9 @@
 from analysis import std_dev
 
+
 class Team(object):
     def __init__(self, team_info):
-        self.name = '{} {}'.format(team_info['location'].strip(), team_info['nickname'].strip())
+        self.name = '{team_info["location"].strip()} {team_info["nickname"].strip()}'
         self.id = team_info['id']
         self.scores = []
         self.average_score = 0
@@ -59,7 +60,7 @@ class Team(object):
                 self.scores.append(score)
                 return score
         else:
-            raise Exception('Failed sanity check. getMatchups returned a matchup team {} isn\'t in'.format(self.id))
+            raise Exception('Failed sanity check. getMatchups returned a matchup team {self.id} isn\'t in'
 
     def get_opponent(self, matchup):
         '''Get opponent for a matchup'''
@@ -68,7 +69,7 @@ class Team(object):
         elif matchup['home']['teamId'] == self.id:
             return matchup['away']['teamId']
         else:
-            raise Exception('Failed sanity check. getMatchups returned a matchup team {} isn\'t in'.format(self.id))
+            raise Exception('Failed sanity check. getMatchups returned a matchup team {self.id} isn\'t in'
 
     def get_opponents(self, league):
         '''Get opponents for a team'''

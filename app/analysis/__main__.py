@@ -4,7 +4,7 @@ import socketserver
 import webbrowser
 from contextlib import contextmanager
 
-import export
+from export import *
 from league import League
 
 fields = {
@@ -23,6 +23,7 @@ input_questions = {
     'espn_s2':'\nIf this is a private league, enter your espn_s2 (otherwise just click enter). This is a cookie ESPN uses for authentication (you can find this if you go to https://www.espn.com/ in Chrome and look at cookies for ESPN (click the lock to the left of the url and then click cookies and look for espn.com then look for espn_s2): '
 }
 
+
 def validate_response(field, response):
     '''Validate that responses are somewhat valid'''
     # sport can only take on these values
@@ -38,6 +39,7 @@ def validate_response(field, response):
             return False
     return True
 
+
 def collect_fields():
     '''Collect the necessary metadata and auth info from the user'''
     for field in input_questions.keys():
@@ -47,15 +49,6 @@ def collect_fields():
             print('\nThat didn\'t seem to be a valid response. Try again.')
             fields[field] = input(input_questions[field])
 
-# From cdunn2001 on StackOverflow: https://stackoverflow.com/questions/431684/how-do-i-change-directory-cd-in-python/24176022#24176022
-@contextmanager
-def cd(newdir):
-    prevdir = os.getcwd()
-    os.chdir(os.path.expanduser(newdir))
-    try:
-        yield
-    finally:
-        os.chdir(prevdir)
 
 try:
     # First try to read config.txt
@@ -83,30 +76,7 @@ league.perform_team_analysis()
 league.teams.sort(key=lambda team: sum(team.win_likelihoods[:league.curr_matchups_played]), reverse=True)
 
 print('Exporting data to html...')
-export.export_league(league)
-for team in league.teams:
-    export.export_team(team, league)
-
-with cd('docs'):
-    PORT = 8000
-    Handler = http.server.SimpleHTTPRequestHandler
-    while True:
-        try:
-            httpd = socketserver.TCPServer(("localhost", PORT), Handler)
-            print('Serving website at http://localhost:{}/home.html'.format(PORT))
-            print('ctrl-c to quit server')
-            web_url = 'http://localhost:{}/home.html'.format(PORT)
-            webbrowser.open(web_url)
-            httpd.allow_reuse_address = True
-            httpd.serve_forever()
-        except KeyboardInterrupt:
-            httpd.server_close()
-            print('Server Stopped')
-            break
-        except OSError:
-            PORT += 1
-            print('Server Stopped')
-        except:
-            httpd.server_close()
-            print('Server Stopped')
-            break
+league_export = {
+    'league': export_league(league),
+    'teams': [export_team(team, league) for team in league.teams]
+}

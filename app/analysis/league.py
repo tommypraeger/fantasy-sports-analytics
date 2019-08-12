@@ -6,9 +6,10 @@ import analysis
 from team import Team
 
 sportMap = {
-    'football':'ffl',
-    'baseball':'flb'
+    'football': 'ffl',
+    'baseball': 'flb'
 }
+
 
 class League(object):
     def __init__(self, league_info):
@@ -29,21 +30,24 @@ class League(object):
 
     def fetch_league(self):
         '''Load league and set metadata for league and teams'''
-        # ESPN's API URL
-        url = 'https://fantasy.espn.com/apis/v3/games/{}/seasons/{}/segments/0/leagues/{}?view=mMatchupScore&view=mStatus&view=mSettings&view=mTeam&view=modular&view=mNav'.format(sportMap[self.sport],self.year,self.id)
-        matchup_url = 'https://fantasy.espn.com/apis/v3/games/{}/seasons/{}/segments/0/leagues/{}?view=mMatchup'.format(sportMap[self.sport],self.year,self.id)
-        
+        # Necessary ESPN API URLs
+        url = (f'https://fantasy.espn.com/apis/v3/games/{sportMap[self.sport]}'
+               f'/seasons/{self.year}/segments/0/leagues/{self.id}'
+               '?view=mMatchupScore&view=mStatus&view=mSettings&view=mTeam&view=modular&view=mNav')
+        matchup_url = (f'https://fantasy.espn.com/apis/v3/games/{sportMap[self.sport]}
+                       f'/seasons/{self.year}/segments/0/leagues/{self.id}?view=mMatchup')
+
         # Cookies needed for authentication
         cookies = {
-            'SWID':self.swid,
-            'espn_s2':self.espn_s2
+            'SWID': self.swid,
+            'espn_s2': self.espn_s2
         }
 
         # Make request and check if it succeeds
         resp = requests.get(url, cookies=cookies)
         matchup_resp = requests.get(matchup_url, cookies=cookies)
         if resp.status_code != 200 or matchup_resp.status_code != 200:
-            raise Exception('Error 401: Unauthorized. Did you forget to set the SWID and/or espn_s2?')
+            raise Exception('401: Unauthorized. Did you forget to set the SWID and/or espn_s2?')
         else:
             resp_json = resp.json()
             matchup_json = matchup_resp.json()

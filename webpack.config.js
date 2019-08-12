@@ -1,7 +1,7 @@
 import path from 'path';
 
 module.exports = {
-  entry: './app/js/index.js',
+  entry: './app/static/js/index.js',
   output: {
     path: path.join(__dirname, 'app/static'),
     filename: 'bundle.js',
