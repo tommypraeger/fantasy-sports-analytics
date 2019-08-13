@@ -4,10 +4,12 @@ from functools import reduce
 import numpy as np
 from scipy.stats import norm
 
+from league import League
 from poibin import PoiBin
+from team import Team
 
 
-def get_win_likelihoods(league, team):
+def get_win_likelihoods(league: league, team: Team) -> None:
     '''Gets win likelihoods for a team'''
 
     for matchup in team.matchups:
@@ -27,7 +29,7 @@ def get_win_likelihoods(league, team):
         matchup['win_likelihood'] = win_likelihood
 
 
-def past_win_likelihood(matchup, league, team):
+def past_win_likelihood(matchup: dict, league: League, team: Team) -> float:
     '''Win likelihood of a past matchup'''
 
     score = matchup['score']
@@ -45,7 +47,11 @@ def past_win_likelihood(matchup, league, team):
                  4)
 
 
-def future_win_likelihood(matchup, league, average_score, std_dev, team):
+def future_win_likelihood(matchup: dict,
+                          league: League,
+                          average_score: float,
+                          std_dev: float,
+                          team: Team) -> float:
     '''Win likelihood of a future matchup'''
 
     opponent = league.get_team(matchup['opponent'])
@@ -63,13 +69,13 @@ def future_win_likelihood(matchup, league, average_score, std_dev, team):
                  4)
 
 
-def std_dev(arr):
+def std_dev(arr: list) -> float:
     '''Standard deviation of an array of numbers'''
 
     return np.std(arr, ddof=1)
 
 
-def win_likelihood(first, second, std_dev):
+def win_likelihood(first: float, second: float, std_dev: float) -> float:
     '''Returns win likelihood given 2 scores and a standard deviation
 
     Implemented as determining the probability that the difference
@@ -79,18 +85,18 @@ def win_likelihood(first, second, std_dev):
     return norm.cdf(first - second, 0, std_dev)
 
 
-def get_win_total_probs(league, team):
+def get_win_total_probs(league: League, team: Team) -> None:
     '''Gets probabilities of having each possible amount of wins'''
 
     # Create Poisson binomial distribution using past expected win likelihoods
     pb = PoiBin(team.win_likelihoods[:league.curr_matchups_played])
 
     # Find probability of having every amount of wins from 0 to matchups played
-    for win_amount in range(league.curr_matchups_played+1):
+    for win_amount in range(league.curr_matchups_played + 1):
         team.win_total_probs.append(round(pb.pmf(win_amount), 4))
 
 
-def get_future_win_total_probs(league, team):
+def get_future_win_total_probs(league: League, team: Team) -> None:
     '''Gets probabilities of ending with each possible amount of wins'''
 
     # Create Poisson binomial distribution using future expected win likelihoods
@@ -103,9 +109,9 @@ def get_future_win_total_probs(league, team):
     # Find probability of having every amount of wins from current wins to max wins
     losses = league.curr_matchups_played - team.wins
     max_wins = league.total_matchups - losses
-    for win_amount in range(team.wins, max_wins+1):
+    for win_amount in range(team.wins, max_wins + 1):
         team.future_win_total_probs.append(round(pb.pmf(win_amount - team.wins), 4))
 
     # Impossible to end with more wins than current wins + matchups remaining
-    for win_amount in range(max_wins+1, league.total_matchups+1):
+    for win_amount in range(max_wins + 1, league.total_matchups + 1):
         team.future_win_total_probs.append(0)

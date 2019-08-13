@@ -1,16 +1,20 @@
-def past_expected_wins(team, league):
+from league import League
+from team import Team
+
+
+def past_expected_wins(team: Team, league: League) -> float:
     '''Sum of expected wins for past matchups'''
 
-    sum(team.win_likelihoods[:league.curr_matchups_played])
+    return sum(team.win_likelihoods[:league.curr_matchups_played])
 
 
-def future_expected_wins(team, league):
+def future_expected_wins(team: Team, league: League) -> float:
     '''Sum of expected wins for future matchups'''
 
-    sum(team.win_likelihoods[league.curr_matchups_played:])
+    return sum(team.win_likelihoods[league.curr_matchups_played:])
 
 
-def export_league(league):
+def export_league(league: League) -> dict:
     '''Export league object'''
 
     league_dict = {
@@ -21,7 +25,7 @@ def export_league(league):
     # All table columns
 
     # List from 1 to num teams
-    league_dict['table']['Expected Standings'] = list(range(1, league.num_teams+1))
+    league_dict['table']['Expected Standings'] = list(range(1, league.num_teams + 1))
 
     # Team names from list - sorted by win expectancy
     league_dict['table']['Team Name'] = [
@@ -71,8 +75,10 @@ def export_league(league):
         for team in league.teams
     ]
 
+    return league_dict
 
-def export_team(team, league):
+
+def export_team(team: Team, league: League) -> dict:
     '''Export team object'''
 
     team_dict = {
@@ -83,8 +89,10 @@ def export_team(team, league):
     export_matchup_stats(team, team_dict)
     export_win_total_probs(team, team_dict)
 
+    return team_dict
 
-def export_matchup_stats(team, team_dict):
+
+def export_matchup_stats(team: Team, team_dict: dict) -> None:
     '''Export team matchup stats'''
 
     total_matchups = len(team.win_likelihoods)
@@ -92,7 +100,7 @@ def export_matchup_stats(team, team_dict):
     # All the columns in matchup table
 
     # List from 1 to num total matchups
-    team_dict['table']['Week'] = list(range(1, total_matchups+1))
+    team_dict['table']['Week'] = list(range(1, total_matchups + 1))
 
     # Points for in each week
     team_dict['table']['Points For'] = team.scores
@@ -111,12 +119,12 @@ def export_matchup_stats(team, team_dict):
 
     # Expected win percentage for each week
     team_dict['table']['Expected Win Percentage'] = [
-        round(prob*100, 2)
+        round(prob * 100, 2)
         for prob in team.win_likelihoods
     ]
 
 
-def export_win_total_probs(team, team_dict):
+def export_win_total_probs(team: Team, team_dict: dict) -> None:
     '''Export win total probabilities to csv'''
 
     total_matchups = len(team.win_likelihoods)
@@ -124,16 +132,16 @@ def export_win_total_probs(team, team_dict):
     # All the columns in win total table
 
     # List from 0 to num total matchups
-    team_dict['table']['Amount of wins'] = list(range(total_matchups+1))
+    team_dict['table']['Amount of wins'] = list(range(total_matchups + 1))
 
     # Percent chance to have currently have a certain number of wins
     team_dict['table']['Percent chance of currently having this many wins'] = [
-        round(prob*100, 2)
+        round(prob * 100, 2)
         for prob in team.win_total_probs
     ]
 
     # Percent chance to end with a certain number of wins
     team_dict['table']['Percent chance of ending with this many wins'] = [
-        round(prob*100, 2)
+        round(prob * 100, 2)
         for prob in team.future_win_total_probs
     ]
