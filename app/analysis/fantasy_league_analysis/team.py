@@ -1,5 +1,4 @@
 from app.analysis.fantasy_league_analysis.analysis import std_dev
-from app.analysis.fantasy_league_analysis.league import League
 
 
 class Team(object):
@@ -20,14 +19,14 @@ class Team(object):
         self.win_total_probs = []
         self.future_win_total_probs = []
 
-    def get_metadata(self, league: League) -> None:
+    def get_metadata(self, league) -> None:
         '''Calculate team-specific score data'''
 
         self.get_matchups(league)
         self.average_score = self.get_average_score(league.curr_matchups_played)
         self.score_std_dev = self.get_adj_std_dev(league.curr_matchups_played)
 
-    def get_matchups(self, league: League) -> None:
+    def get_matchups(self, league) -> None:
         '''Get matchups for a team'''
 
         for matchup_json in league.schedule:
@@ -80,7 +79,7 @@ class Team(object):
             raise Exception('Failed sanity check. '
                             f'getMatchups returned a matchup team {self.id} isn\'t in')
 
-    def get_opponents(self, league: League) -> None:
+    def get_opponents(self, league) -> None:
         '''Get opponents for a team'''
 
         self.opponents = [

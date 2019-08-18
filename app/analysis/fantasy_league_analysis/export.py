@@ -2,19 +2,19 @@ from app.analysis.fantasy_league_analysis.league import League
 from app.analysis.fantasy_league_analysis.team import Team
 
 
-def past_expected_wins(team: Team, league: League) -> float:
+def past_expected_wins(team, league) -> float:
     '''Sum of expected wins for past matchups'''
 
     return sum(team.win_likelihoods[:league.curr_matchups_played])
 
 
-def future_expected_wins(team: Team, league: League) -> float:
+def future_expected_wins(team, league) -> float:
     '''Sum of expected wins for future matchups'''
 
     return sum(team.win_likelihoods[league.curr_matchups_played:])
 
 
-def export_league(league: League) -> dict:
+def export_league(league) -> dict:
     '''Export league object'''
 
     league_dict = {
@@ -78,7 +78,7 @@ def export_league(league: League) -> dict:
     return league_dict
 
 
-def export_team(team: Team, league: League) -> dict:
+def export_team(team, league) -> dict:
     '''Export team object'''
 
     team_dict = {
@@ -92,7 +92,7 @@ def export_team(team: Team, league: League) -> dict:
     return team_dict
 
 
-def export_matchup_stats(team: Team, team_dict: dict) -> None:
+def export_matchup_stats(team, team_dict: dict) -> None:
     '''Export team matchup stats'''
 
     total_matchups = len(team.win_likelihoods)
@@ -124,7 +124,7 @@ def export_matchup_stats(team: Team, team_dict: dict) -> None:
     ]
 
 
-def export_win_total_probs(team: Team, team_dict: dict) -> None:
+def export_win_total_probs(team, team_dict: dict) -> None:
     '''Export win total probabilities to csv'''
 
     total_matchups = len(team.win_likelihoods)

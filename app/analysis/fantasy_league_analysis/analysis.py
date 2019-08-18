@@ -4,12 +4,10 @@ from functools import reduce
 import numpy as np
 from scipy.stats import norm
 
-from app.analysis.fantasy_league_analysis.league import League
 from app.analysis.fantasy_league_analysis.poibin import PoiBin
-from app.analysis.fantasy_league_analysis.team import Team
 
 
-def get_win_likelihoods(league: league, team: Team) -> None:
+def get_win_likelihoods(league, team) -> None:
     '''Gets win likelihoods for a team'''
 
     for matchup in team.matchups:
@@ -29,7 +27,7 @@ def get_win_likelihoods(league: league, team: Team) -> None:
         matchup['win_likelihood'] = win_likelihood
 
 
-def past_win_likelihood(matchup: dict, league: League, team: Team) -> float:
+def past_win_likelihood(matchup: dict, league, team) -> float:
     '''Win likelihood of a past matchup'''
 
     score = matchup['score']
@@ -48,10 +46,10 @@ def past_win_likelihood(matchup: dict, league: League, team: Team) -> float:
 
 
 def future_win_likelihood(matchup: dict,
-                          league: League,
+                          league,
                           average_score: float,
                           std_dev: float,
-                          team: Team) -> float:
+                          team) -> float:
     '''Win likelihood of a future matchup'''
 
     opponent = league.get_team(matchup['opponent'])
@@ -85,7 +83,7 @@ def win_likelihood(first: float, second: float, std_dev: float) -> float:
     return norm.cdf(first - second, 0, std_dev)
 
 
-def get_win_total_probs(league: League, team: Team) -> None:
+def get_win_total_probs(league, team) -> None:
     '''Gets probabilities of having each possible amount of wins'''
 
     # Create Poisson binomial distribution using past expected win likelihoods
@@ -96,7 +94,7 @@ def get_win_total_probs(league: League, team: Team) -> None:
         team.win_total_probs.append(round(pb.pmf(win_amount), 4))
 
 
-def get_future_win_total_probs(league: League, team: Team) -> None:
+def get_future_win_total_probs(league, team) -> None:
     '''Gets probabilities of ending with each possible amount of wins'''
 
     # Create Poisson binomial distribution using future expected win likelihoods

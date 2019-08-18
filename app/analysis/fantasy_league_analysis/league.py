@@ -3,7 +3,7 @@ import re
 import requests
 
 import app.analysis.fantasy_league_analysis.analysis as analysis
-from .team import Team
+from app.analysis.fantasy_league_analysis.team import Team
 
 sportMap = {
     'football': 'ffl',
@@ -117,7 +117,7 @@ class League(object):
         for team in self.teams:
             self.analyze_team(team)
 
-    def analyze_team(self, team: Team) -> None:
+    def analyze_team(self, team) -> None:
         '''Calculate win expectancies'''
 
         analysis.get_win_likelihoods(self, team)
