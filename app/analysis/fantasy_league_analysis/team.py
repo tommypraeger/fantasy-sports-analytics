@@ -1,4 +1,4 @@
-from app.analysis.fantasy_league_analysis.analysis import std_dev
+from .analysis import std_dev
 
 
 class Team(object):

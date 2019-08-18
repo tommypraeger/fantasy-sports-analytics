@@ -2,8 +2,12 @@ import re
 
 import requests
 
-import app.analysis.fantasy_league_analysis.analysis as analysis
-from app.analysis.fantasy_league_analysis.team import Team
+from .analysis import (
+    get_win_likelihoods,
+    get_win_total_probs,
+    get_future_win_total_probs
+)
+from .team import Team
 
 sportMap = {
     'football': 'ffl',
@@ -120,9 +124,9 @@ class League(object):
     def analyze_team(self, team) -> None:
         '''Calculate win expectancies'''
 
-        analysis.get_win_likelihoods(self, team)
-        analysis.get_win_total_probs(self, team)
-        analysis.get_future_win_total_probs(self, team)
+        get_win_likelihoods(self, team)
+        get_win_total_probs(self, team)
+        get_future_win_total_probs(self, team)
 
     def get_team(self, teamId: int) -> Team:
         '''Return a team object given a team id'''

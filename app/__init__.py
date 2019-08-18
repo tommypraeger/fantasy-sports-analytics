@@ -1,13 +1,13 @@
 # flask stuff
-from flask import Flask
+from flask import Flask, jsonify
 from flask_restful import (
     Resource,
     Api,
     reqparse
 )
 
-from app.analysis.fantasy_league_analysis.league import League
-from app.analysis.fantasy_league_analysis.export import export_league, export_team
+from .analysis.fantasy_league_analysis.league import League
+from .analysis.fantasy_league_analysis.export import export_league, export_team
 
 app = Flask(__name__)
 api = Api(app)
@@ -37,7 +37,7 @@ class FantasyLeagueAnalysis(Resource):
             'teams': [export_team(team, league) for team in league.teams]
         }
 
-        return league_export
+        return jsonify(league_export)
 
 
 api.add_resource(FantasyLeagueAnalysis, '/fantasy_league_analysis')
