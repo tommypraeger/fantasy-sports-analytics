@@ -2,8 +2,8 @@ import re
 
 import requests
 
-import analysis
-from team import Team
+import app.analysis.fantasy_league_analysis.analysis as analysis
+from .team import Team
 
 sportMap = {
     'football': 'ffl',

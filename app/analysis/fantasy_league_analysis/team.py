@@ -1,5 +1,5 @@
-from analysis import std_dev
-from league import League
+from app.analysis.fantasy_league_analysis.analysis import std_dev
+from app.analysis.fantasy_league_analysis.league import League
 
 
 class Team(object):

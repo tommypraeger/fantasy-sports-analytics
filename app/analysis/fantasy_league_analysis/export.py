@@ -1,5 +1,5 @@
-from league import League
-from team import Team
+from app.analysis.fantasy_league_analysis.league import League
+from app.analysis.fantasy_league_analysis.team import Team
 
 
 def past_expected_wins(team: Team, league: League) -> float:
