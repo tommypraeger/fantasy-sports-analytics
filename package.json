@@ -1,31 +1,43 @@
 {
-  "name": "next-level-fantasy",
+  "name": "fantasy-sports-analytics",
   "version": "1.0.0",
-  "description": "Next-level analysis for fantasy sports",
+  "description": "Analysis for fantasy sports",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "webpack"
+    "start": "webpack-dev-server --open --hot --mode development",
+    "build": "webpack --mode production"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/tommypraeger/next-level-fantasy.git"
+    "url": "git+https://github.com/tommypraeger/fantasy-sports-analytics.git"
   },
   "author": "Tommy Praeger",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/tommypraeger/next-level-fantasy/issues"
+    "url": "https://github.com/tommypraeger/fantasy-sports-analytics/issues"
   },
-  "homepage": "https://github.com/tommypraeger/next-level-fantasy#readme",
+  "homepage": "https://github.com/tommypraeger/fantasy-sports-analytics#readme",
   "devDependencies": {
+    "@babel/core": "^7.5.5",
+    "@babel/preset-env": "^7.5.5",
+    "@babel/preset-react": "^7.0.0",
+    "babel-loader": "^8.0.6",
     "eslint": "^6.1.0",
     "eslint-config-airbnb": "^18.0.0",
     "eslint-plugin-import": "^2.18.2",
     "eslint-plugin-jsx-a11y": "^6.2.3",
     "eslint-plugin-react": "^7.14.3",
     "eslint-plugin-react-hooks": "^1.7.0",
-    "react": "16.9.0",
-    "react-dom": "16.9.0",
-    "react-router-dom": "5.0.1"
+    "react": "^16.9.0",
+    "react-dom": "^16.9.0",
+    "react-router-dom": "^5.0.1",
+    "webpack": "^4.39.2",
+    "webpack-cli": "^3.3.7",
+    "webpack-dev-server": "^3.8.0"
+  },
+  "dependencies": {
+    "axios": "^0.19.0",
+    "private": "^0.1.8"
   }
 }

@@ -40,7 +40,7 @@ class FantasyLeagueAnalysis(Resource):
         return jsonify(league_export)
 
 
-api.add_resource(FantasyLeagueAnalysis, '/fantasy_league_analysis')
+api.add_resource(FantasyLeagueAnalysis, '/api/v1/fantasy_league_analysis')
 
 if __name__ == '__main__':
         app.run(debug=True)
