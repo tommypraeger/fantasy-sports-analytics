@@ -4,7 +4,7 @@ from functools import reduce
 import numpy as np
 from scipy.stats import norm
 
-from .poibin import PoiBin
+from app.analysis.fantasy_league_analysis.poibin import PoiBin
 
 
 def get_win_likelihoods(league, team) -> None:

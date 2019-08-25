@@ -5,6 +5,7 @@ module.exports = {
   output: {
     path: path.join(__dirname, 'app/static'),
     filename: 'bundle.js',
+    publicPath: '/'
   },
   watch: true,
   module: {
@@ -24,6 +25,7 @@ module.exports = {
     port: 8000,
     proxy: {
       '/api': 'http://localhost:5000'
-    }
+    },
+    historyApiFallback: true
   }
 };

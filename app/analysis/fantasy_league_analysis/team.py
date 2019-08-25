@@ -1,17 +1,14 @@
-from .analysis import std_dev
-
-
 class Team(object):
-    def __init__(self, team_info: dict) -> None:
+    def __init__(self) -> None:
         '''Team metadata'''
 
-        self.name = f'{team_info["location"].strip()} {team_info["nickname"].strip()}'
-        self.id = team_info['id']
+        self.name = ''
+        self.id = 0
         self.scores = []
         self.average_score = 0
         self.score_std_dev = 0
         self.matchups = []
-        self.wins = team_info['record']['overall']['wins']
+        self.wins = 0
         self.opponents = []
         self.opponent_average_scores = []
         self.opponent_std_devs = []
@@ -19,9 +16,13 @@ class Team(object):
         self.win_total_probs = []
         self.future_win_total_probs = []
 
-    def get_metadata(self, league) -> None:
+        
+
+    def get_metadata(self, team_info, league) -> None:
         '''Calculate team-specific score data'''
 
+        self.name = f'{team_info["location"].strip()} {team_info["nickname"].strip()}'
+        self.id = team_info['id']
         self.get_matchups(league)
         self.average_score = self.get_average_score(league.curr_matchups_played)
         self.score_std_dev = self.get_adj_std_dev(league.curr_matchups_played)
