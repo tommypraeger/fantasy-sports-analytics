@@ -63,7 +63,7 @@ def fetch_league(league) -> None:
 
         # Need other team data to be complete before this can be done
         for team in league.teams:
-            team.get_opponents(league)
+            get_opponents(team, league)
 
 
 def get_score_multipliers(league, matchup_json: dict) -> None:
@@ -129,7 +129,7 @@ def get_team_metadata(team, team_info, league) -> None:
     team.name = f'{team_info["location"].strip()} {team_info["nickname"].strip()}'
     team.wins = team_info['record']['overall']['wins']
     team.id = team_info['id']
-    team.get_matchups(league)
+    get_matchups(team, league)
     team.average_score = get_average_score(team, league.curr_matchups_played)
     team.score_std_dev = get_adj_std_dev(team, league.curr_matchups_played)
 
