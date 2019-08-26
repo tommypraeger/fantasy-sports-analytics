@@ -14,8 +14,14 @@ sport_map = {
 }
 
 
-def fetch_league(league) -> None:
+def fetch_league(league, league_info) -> None:
     '''Load league and set metadata for league and teams'''
+
+    league.sport = league_info['sport']
+    league.id = league_info['league_id']
+    league.year = league_info['year']
+    league.swid = league_info['swid']
+    league.espn_s2 = league_info['espn_s2']
 
     # Necessary ESPN API URLs
     url = (f'https://fantasy.espn.com/apis/v3/games/{sport_map[league.sport]}'

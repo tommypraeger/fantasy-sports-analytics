@@ -9,12 +9,11 @@ class League(object):
         platform_path = f'app.analysis.fantasy_league_analysis.fetch_{league_info["platform"]}'
         platform = import_module(platform_path)
 
-        self.sport = league_info['sport'].lower()
-        self.id = league_info['league_id']
-        self.year = league_info['year']
-        self.swid = league_info['swid']
-        self.espn_s2 = league_info['espn_s2']
-        self.platform = league_info['platform']
+        self.sport = ''
+        self.id = ''
+        self.year = ''
+        self.swid = ''
+        self.espn_s2 = ''
         self.name = ''
         self.schedule = []
         self.teams = []
@@ -24,8 +23,13 @@ class League(object):
         self.num_teams = 0
         self.score_multipliers = {}
 
-        platform.fetch_league(self)
+        platform.fetch_league(self, league_info)
         platform.perform_team_analysis(self)
+
+        self.teams.sort(
+            key=lambda team: sum(team.win_likelihoods[:self.curr_matchups_played]),
+            reverse=True
+        )
 
     def get_team(self, teamId: int):
         '''Return a team object given a team id'''
