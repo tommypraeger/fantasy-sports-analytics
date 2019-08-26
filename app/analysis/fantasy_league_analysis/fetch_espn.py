@@ -20,7 +20,7 @@ def fetch_league(league, league_info) -> None:
     league.sport = league_info['sport']
     league.id = league_info['league_id']
     league.year = league_info['year']
-    league.swid = league_info['swid']
+    # league.swid = league_info['swid']
     league.espn_s2 = league_info['espn_s2']
 
     # Necessary ESPN API URLs
@@ -32,44 +32,48 @@ def fetch_league(league, league_info) -> None:
 
     # Cookies needed for authentication
     cookies = {
-        'SWID': league.swid,
+        # 'SWID': league.swid,
         'espn_s2': league.espn_s2
     }
 
     # Make request and check if it succeeds
     resp = requests.get(url, cookies=cookies)
     matchup_resp = requests.get(matchup_url, cookies=cookies)
-    if resp.status_code != 200 or matchup_resp.status_code != 200:
-        raise Exception('401: Unauthorized. Did you forget to set the SWID and/or espn_s2?')
-    else:
-        resp_json = resp.json()
-        matchup_json = matchup_resp.json()
+    if resp.status_code == 401 or matchup_resp.status_code == 401:
+        raise Exception('The request to access your league was unauthorized. '
+                        'Make you provide the espn_s2 cookie if your league is private.')
+    if resp.status_code >= 400 or matchup_resp.status_code >= 400:
+        raise Exception('Something went wrong fetching your league. '
+                        'Make sure the league ID, year, and sport are correct.')
 
-        league.name = resp_json['settings']['name']
-        league.schedule = resp_json['schedule']
-        league.total_matchups = resp_json['settings']['scheduleSettings']['matchupPeriodCount']
-        league.curr_matchups_played = get_curr_matchups_played(
-            league,
-            resp_json['status']['currentMatchupPeriod']
-        )
-        get_score_multipliers(league, matchup_json)
+    resp_json = resp.json()
+    matchup_json = matchup_resp.json()
 
-        # Can't do analysis with less than 2 games played
-        if league.curr_matchups_played < 2:
-            raise Exception('There must have been at least 2 matchups played already.')
+    league.name = resp_json['settings']['name']
+    league.schedule = resp_json['schedule']
+    league.total_matchups = resp_json['settings']['scheduleSettings']['matchupPeriodCount']
+    league.curr_matchups_played = get_curr_matchups_played(
+        league,
+        resp_json['status']['currentMatchupPeriod']
+    )
+    get_score_multipliers(league, matchup_json)
 
-        teams = resp_json['teams']
-        league.num_teams = len(teams)
+    # Can't do analysis with less than 2 games played
+    if league.curr_matchups_played < 2:
+        raise Exception('There must have been at least 2 matchups played already.')
 
-        for team_info in teams:
-            team_obj = Team()
-            get_team_metadata(team_obj, team_info, league)
-            league.teams.append(team_obj)
-            league.team_map[team_info['id']] = team_obj
+    teams = resp_json['teams']
+    league.num_teams = len(teams)
 
-        # Need other team data to be complete before this can be done
-        for team in league.teams:
-            get_opponents(team, league)
+    for team_info in teams:
+        team_obj = Team()
+        get_team_metadata(team_obj, team_info, league)
+        league.teams.append(team_obj)
+        league.team_map[team_info['id']] = team_obj
+
+    # Need other team data to be complete before this can be done
+    for team in league.teams:
+        get_opponents(team, league)
 
 
 def get_score_multipliers(league, matchup_json: dict) -> None:

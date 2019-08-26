@@ -29,7 +29,7 @@ def export_league(league) -> dict:
             'name': team.name,
             'expected_wins': round(past_expected_wins(team, league), 2),
             'expected_losses': (
-                round(league.curr_matchups_played - past_expected_wins(team, league), 2),
+                round(league.curr_matchups_played - past_expected_wins(team, league), 2)
             ),
             'actual_wins': team.wins,
             'differential': round(team.wins - past_expected_wins(team, league), 2),

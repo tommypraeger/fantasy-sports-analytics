@@ -20,15 +20,31 @@ class LeagueAnalysis extends React.Component {
       sport: 'football',
       leagueId: '',
       year: '',
-      swid: '',
+      //swid: '',
       espn_s2: '',
-      isPrivateLeague: false
+      isPrivateLeague: false,
+      requestFailed: false,
+      errorMessage: ''
     };
   }
 
+  componentDidMount = () => {
+    this.setState({ year: new Date().getFullYear() });
+  }
+
   fetchLeague = (event) => {
+    // Check form validation
+    if (event.currentTarget.checkValidity() === false) {
+      event.preventDefault();
+      event.stopPropagation();
+      event.currentTarget.classList.add('was-validated');
+      return;
+    }
+
     event.preventDefault();
     const self = this;
+
+    // Make request to API
     this.setState({ fetchInProgress: true });
     axios.get('/api/v1/fantasy_league_analysis', {
         params: {
@@ -36,7 +52,7 @@ class LeagueAnalysis extends React.Component {
           sport: this.state.sport,
           league_id: this.state.leagueId,
           year: this.state.year,
-          swid: this.state.swid,
+          //swid: this.state.swid,
           espn_s2: this.state.espn_s2
         }
       })
@@ -49,6 +65,9 @@ class LeagueAnalysis extends React.Component {
       })
       .catch(function (err) {
         console.error(err);
+        self.setState({ errorMessage: String(err) });
+        self.setState({ fetchInProgress: false });
+        self.setState({ requestFailed: true });
       });
   }
 
@@ -75,66 +94,92 @@ class LeagueAnalysis extends React.Component {
     if (this.state.isPrivateLeague) {
       espnAuth = (
         <div>
-          <Form.Group>
+          {/* SWID not needed apparently
+            <Form.Group>
               <Form.Label>SWID</Form.Label>
               <Form.Control
                 name='swid'
                 value={this.state.swid}
                 onChange={this.handleChange}
+                placeholder='{123456AB-123D-5678-ABC4-123456789ABC}'
+                required
               >
               </Form.Control>
-          </Form.Group>
-          <Form.Group>
+          </Form.Group>*/}
+          <Form.Group controlId='espn_s2'>
               <Form.Label>espn_s2</Form.Label>
               <Form.Control
                 name='espn_s2'
                 value={this.state.espn_s2}
                 onChange={this.handleChange}
-              >
-              </Form.Control>
+                placeholder='ADgDGFGDfgDFGDfgRTEFwecsYJUyrCWdcdsgRTHTbVEdSCdserVed...'
+                required
+              />
+              <Form.Control.Feedback type='invalid'>
+                Please provide the espn_s2 cookie for private leagues.
+              </Form.Control.Feedback>
           </Form.Group>
         </div>
       )
     }
 
+    let validYears = [];
+    for (let i = this.state.year; i >= 2018; i--) {
+      validYears.push(i);
+    }
+
     const espnForm = (
       <div>
-        <Form.Group>
+        <Form.Group controlId='espnSport'>
             <Form.Label>Sport</Form.Label>
             <Form.Control
               name='sport'
               value={this.state.sport}
               as='select'
               onChange={this.handleChange}
+              required
             >
               <option value='football'>Football</option>
               <option value='baseball'>Baseball</option>
             </Form.Control>
         </Form.Group>
-        <Form.Group>
+        <Form.Group controlId='espnLeagueId'>
             <Form.Label>League ID</Form.Label>
             <Form.Control
               name='leagueId'
               value={this.state.leagueId}
               onChange={this.handleChange}
-            >
-            </Form.Control>
+              placeholder='12345678'
+              required
+            />
+            <Form.Control.Feedback type='invalid'>
+              Please provide a league ID.
+            </Form.Control.Feedback>
         </Form.Group>
-        <Form.Group>
+        <Form.Group controlId='espnYear'>
             <Form.Label>Year</Form.Label>
             <Form.Control
               name='year'
               value={this.state.year}
+              as='select'
               onChange={this.handleChange}
+              required
             >
+              {
+                validYears.map((year) => {
+                  return (
+                    <option value={year}>{year}</option>
+                  );
+                })
+              }
             </Form.Control>
         </Form.Group>
-        <Form.Group>
+        <Form.Group controlId='espnIsPrivateLeague'>
             <Form.Check
               name='isPrivateLeague'
               value={this.state.isPrivateLeague}
               onChange={this.handleCheckboxChange}
-              label='Is this a private league?'
+              label='This is a private league'
             >
             </Form.Check>
         </Form.Group>
@@ -144,15 +189,18 @@ class LeagueAnalysis extends React.Component {
 
     const sleeperForm = (
       <div>
-        <Form.Group>
+        <Form.Group controlId='sleeperLeagueId'>
             <Form.Label>League ID</Form.Label>
             <Form.Control
               name='leagueId'
               value={this.state.leagueId}
               onChange={this.handleChange}
               placeholder='123456789012345678'
-            >
-            </Form.Control>
+              required
+            />
+            <Form.Control.Feedback type='invalid'>
+              Please provide a league ID.
+            </Form.Control.Feedback>
         </Form.Group>
       </div>
     );
@@ -174,13 +222,24 @@ class LeagueAnalysis extends React.Component {
       );
     }
 
+    if (this.state.requestFailed) {
+      return (
+        <div>
+          {this.state.errorMessage}
+        </div>
+      );
+    }
+
     if (this.state.fetchInProgress) {
       return loadingGif;
     }
 
     // Return config form
     return (
-      <Form className='form' onSubmit={this.fetchLeague}>
+      <Form 
+        className='form'
+        noValidate
+        onSubmit={this.fetchLeague}>
         <Form.Group>
           <Form.Label>Platform</Form.Label>
           <Form.Control
