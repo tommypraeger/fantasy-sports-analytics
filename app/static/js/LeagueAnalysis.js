@@ -58,16 +58,21 @@ class LeagueAnalysis extends React.Component {
       })
       .then(function (response) {
         console.log(response.data);
-        self.setState({ league: response.data.league });
-        self.setState({ teams: response.data.teams });
-        self.setState({ fetchInProgress: false });
-        self.setState({ fetchedLeague: true });
+        self.setState({
+          league: response.data.league,
+          teams: response.data.teams,
+          fetchedLeague: true
+        });
       })
       .catch(function (err) {
         console.error(err);
-        self.setState({ errorMessage: String(err) });
+        self.setState({
+          errorMessage: String(err),
+          requestFailed: true
+        });
+      })
+      .finally(function () {
         self.setState({ fetchInProgress: false });
-        self.setState({ requestFailed: true });
       });
   }
 
