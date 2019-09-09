@@ -255,7 +255,7 @@ class LeagueAnalysis extends React.Component {
           >
             <option value='' disabled>Choose a platform...</option>
             <option value='espn'>ESPN</option>
-            <option value='sleeper'>Sleeper</option>
+            {/*<option value='sleeper'>Sleeper</option>*/}
           </Form.Control>
         </Form.Group>
         {form}

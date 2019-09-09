@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom';
 import { BrowserRouter as Router, Route, Link } from 'react-router-dom';
 
 import styles from '../css/base.scss';
-import LeagueAnalysis from './LeagueAnalysis';
+import LeagueAnalysis from './pages/LeagueAnalysis';
 
 function App() {
   return (
