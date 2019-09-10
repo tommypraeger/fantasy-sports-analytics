@@ -5,18 +5,18 @@ import { BrowserRouter as Router, Route, Link } from 'react-router-dom';
 import styles from '../css/base.scss';
 import LeagueAnalysis from './pages/LeagueAnalysis';
 
-function App() {
+function Home() {
   return (
-    <Router>
-      <Route exact path='/' component={Home} />
-      <Route path='/league-analysis' component={LeagueAnalysis} />
-    </Router>
+    <Link to="/league-analysis">League Analysis</Link>
   );
 }
 
-function Home() {
+function App() {
   return (
-    <Link to='/league-analysis'>League Analysis</Link>
+    <Router>
+      <Route exact path="/" component={Home} />
+      <Route path="/league-analysis" component={LeagueAnalysis} />
+    </Router>
   );
 }
 

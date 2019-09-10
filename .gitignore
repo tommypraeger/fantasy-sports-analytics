@@ -7,3 +7,4 @@ venv
 node_modules
 .eslintrc.js
 app/static/bundle.js
+*.pyc

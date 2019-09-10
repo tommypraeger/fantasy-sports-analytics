@@ -1,21 +1,22 @@
 const path = require('path');
 
 module.exports = {
-  entry: './app/static/js/index.js',
+  entry: './app/static/js/index.jsx',
   output: {
     path: path.join(__dirname, 'app/static'),
     filename: 'bundle.js',
-    publicPath: '/'
+    publicPath: '/',
   },
   watch: true,
   module: {
     rules: [
       {
         test: /\.(js|jsx)$/,
+        resolve: { extensions: ['.js', '.jsx'] },
         exclude: /node_modules/,
         use: {
-          loader: "babel-loader"
-        }
+          loader: 'babel-loader',
+        },
       },
       {
         test: /\.s[ac]ss$/i,
@@ -25,18 +26,18 @@ module.exports = {
           // Translates CSS into CommonJS
           'css-loader',
           // Compiles Sass to CSS
-          'sass-loader'
-        ]
-      }
-    ]
+          'sass-loader',
+        ],
+      },
+    ],
   },
   devServer: {
     contentBase: path.join(__dirname, 'app'),
     compress: true,
     port: 8000,
     proxy: {
-      '/api': 'http://localhost:5000'
+      '/api': 'http://localhost:5000',
     },
-    historyApiFallback: true
-  }
+    historyApiFallback: true,
+  },
 };
