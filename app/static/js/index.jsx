@@ -2,6 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import { BrowserRouter as Router, Route, Link } from 'react-router-dom';
 
+// eslint-disable-next-line no-unused-vars
 import styles from '../css/base.scss';
 import LeagueAnalysis from './pages/LeagueAnalysis';
 
@@ -20,4 +21,5 @@ function App() {
   );
 }
 
+// eslint-disable-next-line no-undef
 ReactDOM.render(<App />, document.getElementById('app-container'));

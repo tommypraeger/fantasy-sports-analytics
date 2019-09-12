@@ -1,37 +1,33 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 
-class LoadingGif extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      fetchesInProgress: 0,
-    };
-  }
+function LoadingGif({ fetchesInProgress }) {
+  const loadingGif = (
+    <div className="lds-ring">
+      <div />
+      <div />
+      <div />
+      <div />
+    </div>
+  );
+  return fetchesInProgress > 0
+    ? loadingGif
+    : <div />;
+}
+LoadingGif.propTypes = {
+  fetchesInProgress: PropTypes.string.isRequired,
+};
 
-  incrementFetches = () => {
-    this.setState((prevState) => ({ fetchesInProgress: prevState.fetchesInProgress + 1 }));
-  }
-
-  decrementFetches = () => {
-    this.setState((prevState) => ({ fetchesInProgress: prevState.fetchesInProgress - 1 }));
-  }
-
-  render = () => {
-    const { fetchesInProgress } = this.state;
-
-    const loadingGif = (
-      <div className="lds-ring">
-        <div />
-        <div />
-        <div />
-        <div />
-      </div>
-    );
-
-    return fetchesInProgress > 0
-      ? loadingGif
-      : <div />;
-  }
+function incrementFetches(self) {
+  self.setState((prevState) => ({ fetchesInProgress: prevState.fetchesInProgress + 1 }));
 }
 
-export default LoadingGif;
+function decrementFetches(self) {
+  self.setState((prevState) => ({ fetchesInProgress: prevState.fetchesInProgress - 1 }));
+}
+
+export {
+  LoadingGif,
+  incrementFetches,
+  decrementFetches,
+};
