@@ -3,12 +3,10 @@ import PropTypes from 'prop-types';
 import { Bar } from 'react-chartjs-2';
 
 function BarGraph({
-  data, options, id, className,
+  data, options, className,
 }) {
-  console.log(data);
   return (
     <Bar
-      id={id}
       className={className}
       data={data}
       options={options}
@@ -18,7 +16,6 @@ function BarGraph({
 BarGraph.propTypes = {
   data: PropTypes.objectOf(PropTypes.any).isRequired,
   options: PropTypes.objectOf(PropTypes.any),
-  id: PropTypes.string.isRequired,
   className: PropTypes.string,
 };
 BarGraph.defaultProps = {

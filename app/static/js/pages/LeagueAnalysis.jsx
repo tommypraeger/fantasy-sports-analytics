@@ -29,7 +29,15 @@ class LeagueAnalysis extends React.Component {
       errorMessage: '',
       fetchesInProgress: 0,
     };
+
     this.loadingGif = React.createRef();
+
+    const urlParamString = window.location.search;
+    if (urlParamString) {
+      const urlParams = new URLSearchParams(urlParamString);
+      Object.assign(this.state, Object.fromEntries(urlParams.entries()));
+      this.fetchLeague();
+    }
   }
 
   componentDidMount = () => {
@@ -40,10 +48,10 @@ class LeagueAnalysis extends React.Component {
     });
   }
 
-  fetchLeague = (event) => {
-    // Check form validation
+  // Check form validation
+  validateLeagueInputs = (event) => {
+    event.preventDefault();
     if (event.currentTarget.checkValidity() === false) {
-      event.preventDefault();
       event.stopPropagation();
       event.currentTarget.classList.add('was-validated');
       return;
@@ -56,8 +64,21 @@ class LeagueAnalysis extends React.Component {
       year,
       espnS2,
     } = this.state;
+    const newUrl = `?platform=${platform}&sport=${sport}&leagueId=${leagueId}`
+                    + `&year=${year}&espnS2=${espnS2}`;
+    window.history.pushState({}, '', newUrl);
+    this.fetchLeague();
+  }
 
-    event.preventDefault();
+  // Request league stats from API
+  fetchLeague = () => {
+    const {
+      platform,
+      sport,
+      leagueId,
+      year,
+      espnS2,
+    } = this.state;
 
     // Make request to API
     incrementFetches(this);
@@ -92,19 +113,40 @@ class LeagueAnalysis extends React.Component {
       });
   }
 
+  // Create data object to pass to chart.js
   currentWinProbsGraphData = () => {
     const { teams, view } = this.state;
     const team = teams.find((currTeam) => view === currTeam.name);
     const winProbsData = team.win_total_probs.curr_probs;
     const dataLength = winProbsData.length;
     const colors = Array(dataLength).fill('rgba(0, 85, 212, 0.5)');
-    colors[team.win_total_probs.curr_wins] = 'rgba(212, 0, 0, 1)';
-    const borderColors = Array(dataLength).fill('rgba(0, 85, 212, 0.5)');
+    colors[team.win_total_probs.curr_wins] = 'rgba(212, 0, 0, 0.5)';
+    const borderColors = Array(dataLength).fill('rgba(0, 85, 212, 1)');
     borderColors[team.win_total_probs.curr_wins] = 'rgba(212, 0, 0, 1)';
     return {
       labels: [...Array(dataLength).keys()],
       datasets: [{
-        label: 'Test',
+        label: 'Chance of having each number of wins through this week (%)',
+        data: winProbsData,
+        backgroundColor: colors,
+        borderColor: borderColors,
+        borderWidth: 1,
+      }],
+    };
+  }
+
+  // Create data object to pass to chart.js
+  endWinProbsGraphData = () => {
+    const { teams, view } = this.state;
+    const team = teams.find((currTeam) => view === currTeam.name);
+    const winProbsData = team.win_total_probs.end_probs;
+    const dataLength = winProbsData.length;
+    const colors = Array(dataLength).fill('rgba(0, 85, 212, 0.5)');
+    const borderColors = Array(dataLength).fill('rgba(0, 85, 212, 1)');
+    return {
+      labels: [...Array(dataLength).keys()],
+      datasets: [{
+        label: 'Chance of ending with each number of wins (%)',
         data: winProbsData,
         backgroundColor: colors,
         borderColor: borderColors,
@@ -328,9 +370,12 @@ class LeagueAnalysis extends React.Component {
               columns={teamMatchupsColumns}
             />
             <BarGraph
-              id={`current-win-probs-graph-${view}`}
-              className="current-win-probs-graph"
+              className="win-probs-graph"
               data={this.currentWinProbsGraphData}
+            />
+            <BarGraph
+              className="win-probs-graph"
+              data={this.endWinProbsGraphData}
             />
           </div>
         );
@@ -358,7 +403,7 @@ class LeagueAnalysis extends React.Component {
         <Form
           className="form"
           noValidate
-          onSubmit={this.fetchLeague}
+          onSubmit={this.validateLeagueInputs}
         >
           <Form.Group>
             <Form.Label>Platform</Form.Label>
