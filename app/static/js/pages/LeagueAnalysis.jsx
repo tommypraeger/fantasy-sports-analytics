@@ -1,5 +1,7 @@
+/* eslint-disable react/prop-types */
 import React from 'react';
 import axios from 'axios';
+import querySearch from 'stringquery';
 
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
@@ -31,21 +33,80 @@ class LeagueAnalysis extends React.Component {
     };
 
     this.loadingGif = React.createRef();
-
-    const urlParamString = window.location.search;
-    if (urlParamString) {
-      const urlParams = new URLSearchParams(urlParamString);
-      Object.assign(this.state, Object.fromEntries(urlParams.entries()));
-      this.fetchLeague();
-    }
   }
 
   componentDidMount = () => {
-    const currentYear = new Date().getFullYear();
-    this.setState({
-      currentYear,
-      year: currentYear,
-    });
+    const { location } = this.props;
+    if (location.search) {
+      const urlParams = querySearch(location.search);
+      this.setState({
+        platform: urlParams.platform,
+        sport: urlParams.sport,
+        leagueId: urlParams.leagueId,
+        year: urlParams.year,
+        espnS2: urlParams.espnS2,
+        view: decodeURI(urlParams.view),
+      }, this.fetchLeague);
+    } else {
+      const currentYear = new Date().getFullYear();
+      this.setState({
+        currentYear,
+        year: currentYear,
+      });
+    }
+  }
+
+  componentDidUpdate = () => {
+    const { fetchedLeague, view } = this.state;
+    if (fetchedLeague && view !== 'league') {
+      this.colorMatchupsTable();
+    }
+  }
+
+  colorMatchupsTable = () => {
+    const matchupsTable = document.getElementById('team-matchups-table');
+    const winPctIndex = 5;
+    const wonIndex = 6;
+    let tableChild;
+    let tableRow;
+    for (let i = 0; i < matchupsTable.children.length; i += 1) {
+      tableChild = matchupsTable.children[i];
+      if (tableChild.tagName === 'TBODY') {
+        for (let j = 0; j < tableChild.children.length; j += 1) {
+          tableRow = tableChild.children[j];
+          // Color expected win percent column
+          tableRow.children[winPctIndex].style.backgroundColor = (
+            this.redToGreen(tableRow.children[winPctIndex].innerText)
+          );
+          // Color actual win column
+          if (tableRow.children[wonIndex].innerText === 'Yes') {
+            tableRow.children[wonIndex].style.backgroundColor = 'rgba(0,255,0,0.3)';
+          } else if (tableRow.children[wonIndex].innerText === 'No') {
+            tableRow.children[wonIndex].style.backgroundColor = 'rgba(255,0,0,0.3)';
+          }
+        }
+      }
+    }
+  }
+
+  redToGreen = (stringPercent) => {
+    let r;
+    let g;
+    const b = 0;
+
+    const percent = parseFloat(stringPercent);
+    if (percent < 50) {
+      // red to yellow
+      r = 255;
+      g = Math.floor(255 * (percent / 50));
+    } else {
+      // yellow to green
+      r = Math.floor(255 - (255 * ((percent - 50) / 50)));
+      g = 255;
+    }
+
+    console.log(`rgba(${r},${g},${b})`);
+    return `rgba(${r},${g},${b},0.3)`;
   }
 
   // Check form validation
@@ -63,10 +124,12 @@ class LeagueAnalysis extends React.Component {
       leagueId,
       year,
       espnS2,
+      view,
     } = this.state;
+    const { history } = this.props;
     const newUrl = `?platform=${platform}&sport=${sport}&leagueId=${leagueId}`
-                    + `&year=${year}&espnS2=${espnS2}`;
-    window.history.pushState({}, '', newUrl);
+      + `&year=${year}&espnS2=${espnS2}&view=${view}`;
+    history.push(newUrl);
     this.fetchLeague();
   }
 
@@ -94,7 +157,6 @@ class LeagueAnalysis extends React.Component {
       },
     })
       .then((response) => {
-        // console.log(response.data);
         self.setState({
           league: response.data.league,
           teams: response.data.teams,
@@ -102,9 +164,8 @@ class LeagueAnalysis extends React.Component {
         });
       })
       .catch((err) => {
-        // console.error(err);
         self.setState({
-          errorMessage: String(err),
+          errorMessage: err.response.data.message,
           requestFailed: true,
         });
       })
@@ -117,16 +178,16 @@ class LeagueAnalysis extends React.Component {
   currentWinProbsGraphData = () => {
     const { teams, view } = this.state;
     const team = teams.find((currTeam) => view === currTeam.name);
-    const winProbsData = team.win_total_probs.curr_probs;
+    const winProbsData = team.win_total_probs.curr_probs.slice(0);
     const dataLength = winProbsData.length;
-    const colors = Array(dataLength).fill('rgba(0, 85, 212, 0.5)');
-    colors[team.win_total_probs.curr_wins] = 'rgba(212, 0, 0, 0.5)';
+    const colors = Array(dataLength).fill('rgba(0, 85, 212, 0.8)');
+    colors[team.win_total_probs.curr_wins] = 'rgba(212, 0, 0, 0.8)';
     const borderColors = Array(dataLength).fill('rgba(0, 85, 212, 1)');
     borderColors[team.win_total_probs.curr_wins] = 'rgba(212, 0, 0, 1)';
     return {
       labels: [...Array(dataLength).keys()],
       datasets: [{
-        label: 'Chance of having each number of wins through this week (%)',
+        label: 'Chance of having # of wins through this week, actual wins in red',
         data: winProbsData,
         backgroundColor: colors,
         borderColor: borderColors,
@@ -139,14 +200,14 @@ class LeagueAnalysis extends React.Component {
   endWinProbsGraphData = () => {
     const { teams, view } = this.state;
     const team = teams.find((currTeam) => view === currTeam.name);
-    const winProbsData = team.win_total_probs.end_probs;
+    const winProbsData = team.win_total_probs.end_probs.slice(0);
     const dataLength = winProbsData.length;
-    const colors = Array(dataLength).fill('rgba(0, 85, 212, 0.5)');
+    const colors = Array(dataLength).fill('rgba(0, 85, 212, 0.8)');
     const borderColors = Array(dataLength).fill('rgba(0, 85, 212, 1)');
     return {
       labels: [...Array(dataLength).keys()],
       datasets: [{
-        label: 'Chance of ending with each number of wins (%)',
+        label: 'Chance of ending with # of wins',
         data: winProbsData,
         backgroundColor: colors,
         borderColor: borderColors,
@@ -164,7 +225,21 @@ class LeagueAnalysis extends React.Component {
   }
 
   setView = (viewName) => {
-    this.setState({ view: viewName });
+    this.setState({ view: viewName },
+      () => {
+        const {
+          platform,
+          sport,
+          leagueId,
+          year,
+          espnS2,
+          view,
+        } = this.state;
+        const { history } = this.props;
+        const newUrl = `?platform=${platform}&sport=${sport}&leagueId=${leagueId}`
+          + `&year=${year}&espnS2=${espnS2}&view=${view}`;
+        history.push(newUrl);
+      });
   }
 
   render() {
@@ -218,102 +293,141 @@ class LeagueAnalysis extends React.Component {
       );
     }
 
-    const validYears = [];
-    for (let i = currentYear; i >= 2018; i -= 1) {
-      validYears.push(i);
+    if (requestFailed) {
+      return (
+        <div>
+          {errorMessage}
+          <br />
+          <a href="/league-analysis">Try again</a>
+        </div>
+      );
     }
 
-    const espnForm = (
-      <div>
-        <Form.Group controlId="espnSport">
-          <Form.Label>Sport</Form.Label>
-          <Form.Control
-            name="sport"
-            value={sport}
-            as="select"
-            onChange={this.handleChange}
-            required
-          >
-            <option value="football">Football</option>
-            <option value="baseball">Baseball</option>
-          </Form.Control>
-        </Form.Group>
-        <Form.Group controlId="espnLeagueId">
-          <Form.Label>League ID</Form.Label>
-          <Form.Control
-            name="leagueId"
-            value={leagueId}
-            onChange={this.handleChange}
-            placeholder="12345678"
-            required
-          />
-          <Form.Control.Feedback type="invalid">
-            Please provide a league ID.
-          </Form.Control.Feedback>
-        </Form.Group>
-        <Form.Group controlId="espnYear">
-          <Form.Label>Year</Form.Label>
-          <Form.Control
-            name="year"
-            value={year}
-            as="select"
-            onChange={this.handleChange}
-            required
-          >
-            {
-              validYears.map((validYear) => (
-                <option value={validYear}>{validYear}</option>
-              ))
-            }
-          </Form.Control>
-        </Form.Group>
-        <Form.Group controlId="espnIsPrivateLeague">
-          <Form.Check
-            name="isPrivateLeague"
-            value={isPrivateLeague}
-            onChange={this.handleCheckboxChange}
-            label="This is a private league"
-          >
-          </Form.Check>
-        </Form.Group>
-        {espnAuth}
-      </div>
-    );
+    if (!fetchedLeague) {
+      const validYears = [];
+      for (let i = currentYear; i >= 2018; i -= 1) {
+        validYears.push(i);
+      }
 
-    const sleeperForm = (
-      <div>
-        <Form.Group controlId="sleeperLeagueId">
-          <Form.Label>League ID</Form.Label>
-          <Form.Control
-            name="leagueId"
-            value={leagueId}
-            onChange={this.handleChange}
-            placeholder="123456789012345678"
-            required
-          />
-          <Form.Control.Feedback type="invalid">
-            Please provide a league ID.
-          </Form.Control.Feedback>
-        </Form.Group>
-      </div>
-    );
+      const espnForm = (
+        <div>
+          <Form.Group controlId="espnSport">
+            <Form.Label>Sport</Form.Label>
+            <Form.Control
+              name="sport"
+              value={sport}
+              as="select"
+              onChange={this.handleChange}
+              required
+            >
+              <option value="football">Football</option>
+              <option value="baseball">Baseball</option>
+            </Form.Control>
+          </Form.Group>
+          <Form.Group controlId="espnLeagueId">
+            <Form.Label>League ID</Form.Label>
+            <Form.Control
+              name="leagueId"
+              value={leagueId}
+              onChange={this.handleChange}
+              placeholder="12345678"
+              required
+            />
+            <Form.Control.Feedback type="invalid">
+              Please provide a league ID.
+            </Form.Control.Feedback>
+          </Form.Group>
+          <Form.Group controlId="espnYear">
+            <Form.Label>Year</Form.Label>
+            <Form.Control
+              name="year"
+              value={year}
+              as="select"
+              onChange={this.handleChange}
+              required
+            >
+              {
+                validYears.map((validYear) => (
+                  <option value={validYear}>{validYear}</option>
+                ))
+              }
+            </Form.Control>
+          </Form.Group>
+          <Form.Group controlId="espnIsPrivateLeague">
+            <Form.Check
+              name="isPrivateLeague"
+              value={isPrivateLeague}
+              onChange={this.handleCheckboxChange}
+              label="This is a private league"
+            >
+            </Form.Check>
+          </Form.Group>
+          {espnAuth}
+        </div>
+      );
 
-    let form = '';
-    switch (platform) {
-      case 'espn':
-        form = espnForm;
-        break;
-      case 'sleeper':
-        form = sleeperForm;
-        break;
-      default:
-        form = espnForm;
+      const sleeperForm = (
+        <div>
+          <Form.Group controlId="sleeperLeagueId">
+            <Form.Label>League ID</Form.Label>
+            <Form.Control
+              name="leagueId"
+              value={leagueId}
+              onChange={this.handleChange}
+              placeholder="123456789012345678"
+              required
+            />
+            <Form.Control.Feedback type="invalid">
+              Please provide a league ID.
+            </Form.Control.Feedback>
+          </Form.Group>
+        </div>
+      );
+
+      let form = '';
+      switch (platform) {
+        case 'espn':
+          form = espnForm;
+          break;
+        case 'sleeper':
+          form = sleeperForm;
+          break;
+        default:
+          form = espnForm;
+      }
+
+      // Return config form
+      return (
+        <div>
+          <LoadingGif fetchesInProgress={fetchesInProgress} />
+          <Form
+            className="form"
+            noValidate
+            onSubmit={this.validateLeagueInputs}
+          >
+            <Form.Group>
+              <Form.Label>Platform</Form.Label>
+              <Form.Control
+                name="platform"
+                value={platform}
+                as="select"
+                onChange={this.handleChange}
+              >
+                <option value="espn">ESPN</option>
+                {/* <option value='sleeper'>Sleeper</option> */}
+              </Form.Control>
+            </Form.Group>
+            {form}
+            <Button type="submit">Submit</Button>
+          </Form>
+        </div>
+      );
     }
 
     // Return league page
     if (fetchedLeague) {
       const sideNav = (
-        <Nav defaultActiveKey="/home" className="flex-column">
+        <Nav defaultActiveKey="/home" className="flex-column side-nav">
           <Nav.Item
             onClick={() => this.setView('league')}
             eventKey="league"
@@ -351,10 +465,12 @@ class LeagueAnalysis extends React.Component {
         'Opponent Average Score',
         'Opponent Adj. Std. Dev.',
         'Expected Win %',
+        'Actual Win?',
       ];
       const statsPage = view === 'league'
         ? (
-          <div>
+          <div className="league-analysis-page">
+            <h2>Expected Standings</h2>
             <Table
               id="league-standings-table"
               data={league.standings_table}
@@ -363,19 +479,79 @@ class LeagueAnalysis extends React.Component {
           </div>
         )
         : (
-          <div>
+          <div className="league-analysis-page">
+            <h2>{view}</h2>
+            <div className="win-probs-graph">
+              <h3>Expected Win Distribution Through This Week</h3>
+              <BarGraph
+                data={this.currentWinProbsGraphData()}
+                options={{
+                  scales: {
+                    yAxes: [{
+                      ticks: {
+                        callback(value) {
+                          return `${value}%`;
+                        },
+                        beginAtZero: true,
+                      },
+                      scaleLabel: {
+                        display: true,
+                        labelString: 'Percent Chance',
+                        fontSize: 18,
+                      },
+                    }],
+                    xAxes: [{
+                      ticks: {
+                        beginAtZero: true,
+                      },
+                      scaleLabel: {
+                        display: true,
+                        labelString: 'Number of wins',
+                        fontSize: 18,
+                      },
+                    }],
+                  },
+                }}
+              />
+            </div>
+            <div className="win-probs-graph">
+              <h3>Projected End Of Season Win Distribution</h3>
+              <BarGraph
+                data={this.endWinProbsGraphData()}
+                options={{
+                  scales: {
+                    yAxes: [{
+                      ticks: {
+                        callback(value) {
+                          return `${value}%`;
+                        },
+                        beginAtZero: true,
+                      },
+                      scaleLabel: {
+                        display: true,
+                        labelString: 'Percent Chance',
+                        fontSize: 18,
+                      },
+                    }],
+                    xAxes: [{
+                      ticks: {
+                        beginAtZero: true,
+                      },
+                      scaleLabel: {
+                        display: true,
+                        labelString: 'Number of wins',
+                        fontSize: 18,
+                      },
+                    }],
+                  },
+                }}
+              />
+            </div>
+            <h3>Matchup Data</h3>
             <Table
-              className="team-matchups-table"
+              id="team-matchups-table"
               data={teams.find((team) => view === team.name).matchup_table}
               columns={teamMatchupsColumns}
-            />
-            <BarGraph
-              className="win-probs-graph"
-              data={this.currentWinProbsGraphData}
-            />
-            <BarGraph
-              className="win-probs-graph"
-              data={this.endWinProbsGraphData}
             />
           </div>
         );
@@ -388,40 +564,7 @@ class LeagueAnalysis extends React.Component {
       );
     }
 
-    if (requestFailed) {
-      return (
-        <div>
-          {errorMessage}
-        </div>
-      );
-    }
-
-    // Return config form
-    return (
-      <div>
-        <LoadingGif fetchesInProgress={fetchesInProgress} />
-        <Form
-          className="form"
-          noValidate
-          onSubmit={this.validateLeagueInputs}
-        >
-          <Form.Group>
-            <Form.Label>Platform</Form.Label>
-            <Form.Control
-              name="platform"
-              value={platform}
-              as="select"
-              onChange={this.handleChange}
-            >
-              <option value="espn">ESPN</option>
-              {/* <option value='sleeper'>Sleeper</option> */}
-            </Form.Control>
-          </Form.Group>
-          {form}
-          <Button type="submit">Submit</Button>
-        </Form>
-      </div>
-    );
+    return undefined;
   }
 }
 

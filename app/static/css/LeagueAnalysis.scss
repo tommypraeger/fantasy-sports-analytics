@@ -1,0 +1,11 @@
+@import "constants";
+
+.league-analysis-page {
+    width: calc(100% - #{$side-nav-width} - #{$page-margin} - #{$page-margin});
+    display: inline-block;
+    margin: $page-margin;
+}
+
+.win-probs-graph {
+    margin-bottom: 20px;
+}

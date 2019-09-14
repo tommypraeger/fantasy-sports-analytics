@@ -1,4 +1,13 @@
 @import "loading";
+@import "LeagueAnalysis";
+
+@import "constants";
+
+body {
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    color: white;
+    background-color: $darkest;
+}
 
 .form {
     margin: auto;
@@ -7,4 +16,28 @@
     border-radius: 40px;
     padding: 60px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.8);
+}
+
+.side-nav {
+    float: left;
+    width: $side-nav-width;
+    border: 1px solid white;
+    margin-top: $page-margin;
+
+    div {
+        border-bottom: 1px solid white;
+        background-color: $darker;
+        padding: 10px;
+        
+        &:last-child {
+            border: 0;
+        }
+
+        &:hover {
+            background-color: $dark;
+            cursor: pointer;
+        }
+
+
+    }
 }
