@@ -10,6 +10,7 @@ import Nav from 'react-bootstrap/Nav';
 import { LoadingGif, incrementFetches, decrementFetches } from '../components/LoadingGif';
 import Table from '../components/Table';
 import BarGraph from '../components/Graph';
+import NavBar from '../components/NavBar';
 
 class LeagueAnalysis extends React.Component {
   constructor(props) {
@@ -80,9 +81,9 @@ class LeagueAnalysis extends React.Component {
           );
           // Color actual win column
           if (tableRow.children[wonIndex].innerText === 'Yes') {
-            tableRow.children[wonIndex].style.backgroundColor = 'rgba(0,255,0,0.3)';
+            tableRow.children[wonIndex].style.backgroundColor = 'rgba(0,255,0,0.5)';
           } else if (tableRow.children[wonIndex].innerText === 'No') {
-            tableRow.children[wonIndex].style.backgroundColor = 'rgba(255,0,0,0.3)';
+            tableRow.children[wonIndex].style.backgroundColor = 'rgba(255,0,0,0.5)';
           }
         }
       }
@@ -106,7 +107,7 @@ class LeagueAnalysis extends React.Component {
     }
 
     console.log(`rgba(${r},${g},${b})`);
-    return `rgba(${r},${g},${b},0.3)`;
+    return `rgba(${r},${g},${b},0.5)`;
   }
 
   // Check form validation
@@ -293,17 +294,17 @@ class LeagueAnalysis extends React.Component {
       );
     }
 
+    let returnedPage;
+
     if (requestFailed) {
-      return (
+      returnedPage = (
         <div>
           {errorMessage}
           <br />
           <a href="/league-analysis">Try again</a>
         </div>
       );
-    }
-
-    if (!fetchedLeague) {
+    } else if (!fetchedLeague) {
       const validYears = [];
       for (let i = currentYear; i >= 2018; i -= 1) {
         validYears.push(i);
@@ -397,7 +398,7 @@ class LeagueAnalysis extends React.Component {
       }
 
       // Return config form
-      return (
+      returnedPage = (
         <div>
           <LoadingGif fetchesInProgress={fetchesInProgress} />
           <Form
@@ -422,10 +423,8 @@ class LeagueAnalysis extends React.Component {
           </Form>
         </div>
       );
-    }
-
-    // Return league page
-    if (fetchedLeague) {
+    } else if (fetchedLeague) {
+      // Return league page
       const sideNav = (
         <Nav defaultActiveKey="/home" className="flex-column side-nav">
           <Nav.Item
@@ -556,7 +555,7 @@ class LeagueAnalysis extends React.Component {
           </div>
         );
 
-      return (
+      returnedPage = (
         <div>
           {sideNav}
           {statsPage}
@@ -564,7 +563,12 @@ class LeagueAnalysis extends React.Component {
       );
     }
 
-    return undefined;
+    return (
+      <div>
+        <NavBar />
+        {returnedPage}
+      </div>
+    );
   }
 }
 
