@@ -1,8 +1,8 @@
 /* eslint-disable react/prop-types */
-import React from 'react';
 import axios from 'axios';
 import querySearch from 'stringquery';
 
+import React from 'react';
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import Nav from 'react-bootstrap/Nav';
@@ -106,7 +106,6 @@ class LeagueAnalysis extends React.Component {
       g = 255;
     }
 
-    console.log(`rgba(${r},${g},${b})`);
     return `rgba(${r},${g},${b},0.5)`;
   }
 
@@ -261,39 +260,6 @@ class LeagueAnalysis extends React.Component {
       view,
     } = this.state;
 
-    let espnAuth = '';
-    if (isPrivateLeague) {
-      espnAuth = (
-        <div>
-          {/* SWID not needed apparently
-            <Form.Group>
-              <Form.Label>SWID</Form.Label>
-              <Form.Control
-                name='swid'
-                value={swid}
-                onChange={this.handleChange}
-                placeholder='{123456AB-123D-5678-ABC4-123456789ABC}'
-                required
-              >
-              </Form.Control>
-          </Form.Group> */}
-          <Form.Group controlId="espnS2">
-            <Form.Label>espn_s2</Form.Label>
-            <Form.Control
-              name="espnS2"
-              value={espnS2}
-              onChange={this.handleChange}
-              placeholder="ADgDGFGDfgDFGDfgRTEFwecsYJUyrCWdcdsgRTHTbVEdSCdserVed..."
-              required
-            />
-            <Form.Control.Feedback type="invalid">
-              Please provide the espn_s2 cookie for private leagues.
-            </Form.Control.Feedback>
-          </Form.Group>
-        </div>
-      );
-    }
-
     let returnedPage;
 
     if (requestFailed) {
@@ -308,6 +274,50 @@ class LeagueAnalysis extends React.Component {
       const validYears = [];
       for (let i = currentYear; i >= 2018; i -= 1) {
         validYears.push(i);
+      }
+
+      let espnAuth = '';
+      if (isPrivateLeague) {
+        espnAuth = (
+          <div>
+            {/* SWID not needed apparently
+              <Form.Group>
+                <Form.Label>SWID</Form.Label>
+                <Form.Control
+                  name='swid'
+                  value={swid}
+                  onChange={this.handleChange}
+                  placeholder='{123456AB-123D-5678-ABC4-123456789ABC}'
+                  required
+                >
+                </Form.Control>
+            </Form.Group> */}
+            <Form.Group controlId="espnS2">
+              <Form.Label>espn_s2</Form.Label>
+              <div className="help-tip">
+                <p>
+                  espn_s2 is a cookie that ESPN uses for authentication.
+                  I need to use it to access private leagues.
+                  Click
+                  {' '}
+                  <a href="/faqs#espn-s2">here</a>
+                  {' '}
+                  for more information on how to find it.
+                </p>
+              </div>
+              <Form.Control
+                name="espnS2"
+                value={espnS2}
+                onChange={this.handleChange}
+                placeholder="ADgDGFGDfgDFGDfgRTEFwecsYJUyrCWdcdsgRTHTbVEdSCdserVed..."
+                required
+              />
+              <Form.Control.Feedback type="invalid">
+                Please provide the espn_s2 cookie for private leagues.
+              </Form.Control.Feedback>
+            </Form.Group>
+          </div>
+        );
       }
 
       const espnForm = (
@@ -327,6 +337,16 @@ class LeagueAnalysis extends React.Component {
           </Form.Group>
           <Form.Group controlId="espnLeagueId">
             <Form.Label>League ID</Form.Label>
+            <div className="help-tip">
+              <p>
+                League ID is how ESPN uniquely identifies fantasy leagues.
+                Click
+                {' '}
+                <a href="/faqs#espn-league-id">here</a>
+                {' '}
+                for more information on how to find it.
+              </p>
+            </div>
             <Form.Control
               name="leagueId"
               value={leagueId}

@@ -3,7 +3,7 @@ const path = require('path');
 module.exports = {
   entry: './app/static/js/index.jsx',
   output: {
-    path: path.join(__dirname, 'app/static'),
+    path: path.join(__dirname, 'app/static/build'),
     filename: 'bundle.js',
     publicPath: '/',
   },
@@ -17,6 +17,12 @@ module.exports = {
         use: {
           loader: 'babel-loader',
         },
+      },
+      {
+        test: /\.(png|svg|jpg|gif)$/,
+        use: [
+          'file-loader',
+        ],
       },
       {
         test: /\.s[ac]ss$/i,
