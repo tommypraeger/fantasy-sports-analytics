@@ -3,7 +3,7 @@ const path = require('path');
 module.exports = {
   entry: './app/static/js/index.jsx',
   output: {
-    path: path.join(__dirname, 'app/static/build'),
+    path: path.join(__dirname, 'app'),
     filename: 'bundle.js',
     publicPath: '/',
   },
@@ -21,7 +21,12 @@ module.exports = {
       {
         test: /\.(png|svg|jpg|gif)$/,
         use: [
-          'file-loader',
+          {
+            loader: 'file-loader',
+            options: {
+              name: '[name]-[hash:8].[ext]',
+            },
+          },
         ],
       },
       {

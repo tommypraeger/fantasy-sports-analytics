@@ -56,7 +56,7 @@ function FAQs() {
               <a href="https://www.khanacademy.org/math/ap-statistics/random-variables-ap/
                        combining-random-variables/a/combining-random-variables-article"
               >
-              rules of subtracting independent random variables
+                rules of subtracting independent random variables
               </a>
               . I then find the probability of the random variable being greater than zero,
               {' '}
@@ -82,7 +82,7 @@ function FAQs() {
               To find expected win distribution, I treat all past expected win probabilities as a
               {' '}
               <a href="https://en.wikipedia.org/wiki/Poisson_binomial_distribution">
-              Poission binomial distribution
+                Poission binomial distribution
               </a>
               . I then loop over each of
               {' '}
@@ -152,13 +152,13 @@ function FAQs() {
               <br />
               Then, click &quot;Cookies&quot;.
               <br />
-              <img src={viewCookies2} alt="Open cookies example" />
+              <img src={viewCookies2} alt="Open cookies example" width="320" />
               <br />
               Then, scroll down to espn.com and find the espn_s2 cookie. Copy and paste the whole
               {' '}
               thing from the &quot;Content&quot; field.
               <br />
-              <img src={espnS2} alt="espn_s2 example" />
+              <img src={espnS2} alt="espn_s2 example" width="441" />
               <br />
               It is really long, much longer than you can see in the screenshot, so make sure
               {' '}
@@ -210,11 +210,14 @@ function FAQs() {
               {' '}
               (with team names covered for privacy).
               <br />
-              <img src={leagueExample} alt="League example" />
               <br />
-              <img src={winDistExample} alt="Win distribution graph example" />
+              <img src={leagueExample} alt="League example" width="1088" />
               <br />
-              <img src={matchupDataExample} alt="Matchup data example" />
+              <br />
+              <img src={winDistExample} alt="Win distribution graph example" width="1036" />
+              <br />
+              <br />
+              <img src={matchupDataExample} alt="Matchup data example" width="1007" />
             </Card.Body>
           </Accordion.Collapse>
         </Card>

@@ -369,7 +369,7 @@ class LeagueAnalysis extends React.Component {
             >
               {
                 validYears.map((validYear) => (
-                  <option value={validYear}>{validYear}</option>
+                  <option value={validYear} key={validYear}>{validYear}</option>
                 ))
               }
             </Form.Control>

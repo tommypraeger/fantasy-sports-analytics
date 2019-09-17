@@ -15,7 +15,7 @@ function LoadingGif({ fetchesInProgress }) {
     : <div />;
 }
 LoadingGif.propTypes = {
-  fetchesInProgress: PropTypes.string.isRequired,
+  fetchesInProgress: PropTypes.number.isRequired,
 };
 
 function incrementFetches(self) {

@@ -6,6 +6,6 @@ venv
 .ebignore
 node_modules
 .eslintrc.js
-app/static/build/*bundle.js
-app/static/build/*.png
+app/bundle.js
+app/*.png
 *.pyc
