@@ -1,0 +1,15 @@
+__pycache__*
+.DS_Store
+myconfig.txt
+.vscode
+virt
+.ebignore
+node_modules
+.eslintrc.js
+*.pyc
+app/dist
+
+# Elastic Beanstalk Files
+.elasticbeanstalk/*
+!.elasticbeanstalk/*.cfg.yml
+!.elasticbeanstalk/*.global.yml
