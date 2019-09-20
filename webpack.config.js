@@ -1,12 +1,19 @@
 const path = require('path');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 module.exports = {
   entry: './app/static/js/index.jsx',
   output: {
-    path: path.join(__dirname, 'app'),
+    path: path.join(__dirname, 'app', 'dist'),
     filename: 'bundle.js',
     publicPath: '/',
   },
+  plugins: [
+    new HtmlWebpackPlugin({
+      title: 'Fantasy Sports Analytics',
+      template: './app/index.html',
+    }),
+  ],
   watch: true,
   module: {
     rules: [
@@ -43,7 +50,7 @@ module.exports = {
     ],
   },
   devServer: {
-    contentBase: path.join(__dirname, 'app'),
+    contentBase: path.join(__dirname, 'app', 'dist'),
     compress: true,
     port: 8000,
     proxy: {
