@@ -16,14 +16,6 @@ api = Api(app)
 
 class FantasyLeagueAnalysis(Resource):
     def get(self):
-        fields = {
-            'platform': 'espn',
-            'sport': 'baseball',
-            'league_id': 58769671,
-            'year': 2019,
-            'swid': '{3912796D-CF3D-4297-ABA6-B5BF3051E861}',
-            'espn_s2': 'AEARdPEFgZM61MMlwMZpD9S1%2BwZEES5M4ZSlJza2SqJtxziTh4BEf61305pT7vVBT833l%2BfNxGtcs%2BXilo5EPuVYVgjC7%2BxI%2F3Vw%2BX8zFc84XevaowFhMjWilUQp%2FyBqGW2cpQUDH%2BfOi0kQEAbwEsMmUuQKuTM7GuADcujUnkfm698xGK%2F0LDY7IxVXi%2FcPMuRwGbSXSVdcFOKS82XyeYOA0LSXD6T1Q0VitNSlFdTGlzIzv631ZvbL8vLyxB%2B1rgl71UZV7CccnzU4cnidMcWh'
-        }
         try:
             # Argument reqs
             # ESPN: sport, league_id, year, (espn_s2, swid for private leagues)
