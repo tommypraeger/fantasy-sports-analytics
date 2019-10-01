@@ -4,6 +4,7 @@
     width: calc(100% - #{$side-nav-width} - #{$page-margin} - #{$page-margin});
     display: inline-block;
     margin: $page-margin;
+    margin-bottom: 0;
 }
 
 .win-probs-graph {

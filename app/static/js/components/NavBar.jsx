@@ -6,7 +6,15 @@ import { NavLink } from 'react-router-dom';
 function NavBar() {
   return (
     <Navbar bg="dark" variant="dark">
-      <Navbar.Brand href="/">Fantasy Sports Analytics</Navbar.Brand>
+      <Navbar.Brand>
+        <NavLink
+          to="/"
+          className="nav-link"
+          activeClassName="nav-link-selected"
+        >
+          Fantasy Sports Analytics
+        </NavLink>
+      </Navbar.Brand>
       <Nav className="mr-auto">
         <Nav.Link>
           <NavLink

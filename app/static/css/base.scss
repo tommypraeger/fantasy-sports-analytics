@@ -33,7 +33,7 @@ body {
         border-bottom: 1px solid white;
         background-color: $darker;
         padding: 10px;
-        
+
         &:last-child {
             border: 0;
         }
@@ -42,7 +42,11 @@ body {
             background-color: $dark;
             cursor: pointer;
         }
-
-
     }
+}
+
+#creator-note {
+    float: right;
+    margin: 20px 10px 10px 0;
+    font-size: 14px;
 }
