@@ -133,6 +133,11 @@ class LeagueAnalysis extends React.Component {
     this.fetchLeague();
   }
 
+  // Reset league info state and reload
+  resetLeague = () => {
+    window.location = window.location.pathname;
+  }
+
   // Request league stats from API
   fetchLeague = () => {
     const {
@@ -458,12 +463,23 @@ class LeagueAnalysis extends React.Component {
               <Nav.Item
                 onClick={() => this.setView(team.name)}
                 eventKey={team.name}
+                key={team.name}
               >
                 {team.name}
               </Nav.Item>
             ))
           }
         </Nav>
+      );
+
+      const resetLeague = (
+        <Button
+          variant="dark"
+          onClick={this.resetLeague}
+          className="reset-league-btn"
+        >
+          Re-enter League Info
+        </Button>
       );
 
       const leagueStandingsColumns = [
@@ -489,7 +505,10 @@ class LeagueAnalysis extends React.Component {
       const statsPage = view === 'league'
         ? (
           <div className="league-analysis-page">
-            <h2>Expected Standings</h2>
+            <div className="page-title">
+              <h2>Expected Standings</h2>
+              {resetLeague}
+            </div>
             <Table
               id="league-standings-table"
               data={league.standings_table}
@@ -499,7 +518,10 @@ class LeagueAnalysis extends React.Component {
         )
         : (
           <div className="league-analysis-page">
-            <h2>{view}</h2>
+            <div className="page-title">
+              <h2>{view}</h2>
+              {resetLeague}
+            </div>
             <div className="win-probs-graph">
               <h3>Expected Win Distribution Through This Week</h3>
               <BarGraph

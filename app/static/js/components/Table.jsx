@@ -1,3 +1,4 @@
+/* eslint-disable react/no-array-index-key */
 import React from 'react';
 import ReactTable from 'react-bootstrap/Table';
 import PropTypes from 'prop-types';
@@ -9,16 +10,16 @@ function Table({
     <ReactTable id={id} className={className} striped bordered hover variant="dark">
       <thead>
         <tr>
-          {columns.map((columnName) => (
-            <th>{columnName}</th>
+          {columns.map((columnName, i) => (
+            <th key={`header-${i}`}>{columnName}</th>
           ))}
         </tr>
       </thead>
       <tbody>
-        {data.map((row) => (
-          <tr>
-            {columns.map((columnName) => (
-              <td>
+        {data.map((row, i) => (
+          <tr key={`row-${i}`}>
+            {columns.map((columnName, j) => (
+              <td key={`cell-${i * j + j}`}>
                 {row[columnName]}
               </td>
             ))}
@@ -29,8 +30,8 @@ function Table({
   );
 }
 Table.propTypes = {
-  data: PropTypes.arrayOf(PropTypes.objectOf(PropTypes.number)).isRequired,
-  columns: PropTypes.string.isRequired,
+  data: PropTypes.arrayOf(PropTypes.objectOf(PropTypes.any)).isRequired,
+  columns: PropTypes.arrayOf(PropTypes.string).isRequired,
   id: PropTypes.string,
   className: PropTypes.string,
 };
