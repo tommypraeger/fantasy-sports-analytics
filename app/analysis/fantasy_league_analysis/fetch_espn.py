@@ -18,10 +18,9 @@ def fetch_league(league, league_info) -> None:
     '''Load league and set metadata for league and teams'''
 
     league.sport = league_info['sport']
-    league.id = league_info['league_id']
+    league.id = league_info['leagueId']
     league.year = league_info['year']
-    # league.swid = league_info['swid']
-    league.espn_s2 = league_info['espn_s2']
+    league.espn_s2 = league_info['espnS2']
 
     # Necessary ESPN API URLs
     url = (f'https://fantasy.espn.com/apis/v3/games/{sport_map[league.sport]}'
@@ -32,7 +31,6 @@ def fetch_league(league, league_info) -> None:
 
     # Cookies needed for authentication
     cookies = {
-        # 'SWID': league.swid,
         'espn_s2': league.espn_s2
     }
 
@@ -97,6 +95,9 @@ def get_score_multipliers(league, matchup_json: dict) -> None:
         )
 
     # Find most frequent number of scoring periods in a matchup
+    if len(scoring_period_count.values()) == 0:
+        raise Exception(f'It looks like the league didn\'t take place in {league.year}. '
+                        'Make sure the league ID, year, and sport are correct.')
     usual_scoring_period_count = max(set(scoring_period_count.values()),
                                      key=list(scoring_period_count.values()).count)
 
