@@ -12,9 +12,10 @@ module.exports = {
     new HtmlWebpackPlugin({
       title: 'Fantasy Sports Analytics',
       template: './app/index.html',
+      favicon: './app/favicon.ico',
     }),
   ],
-  watch: true,
+  watch: false,
   module: {
     rules: [
       {
@@ -53,9 +54,9 @@ module.exports = {
     contentBase: path.join(__dirname, 'app', 'dist'),
     compress: true,
     port: 8000,
-    proxy: {
-      '/api': 'http://localhost:5000',
-    },
+    // proxy: {
+    //   '/api': 'http://localhost:5000',
+    // },
     historyApiFallback: true,
   },
 };

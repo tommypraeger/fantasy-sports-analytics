@@ -11,7 +11,7 @@ import leagueExample from '../../images/league_example.png';
 import winDistExample from '../../images/win_dist_graph_example.png';
 import matchupDataExample from '../../images/matchup_data_example.png';
 
-function FAQs() {
+const FAQs = () => {
   const defaultActive = 'how-calculate';
   const active = window.location.hash.split('#')[1] || defaultActive;
   return (
@@ -224,6 +224,6 @@ function FAQs() {
       </Accordion>
     </div>
   );
-}
+};
 
 export default FAQs;
