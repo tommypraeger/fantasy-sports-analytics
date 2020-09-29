@@ -12,7 +12,6 @@ class League(object):
         self.sport = ''
         self.id = ''
         self.year = ''
-        self.swid = ''
         self.espn_s2 = ''
         self.name = ''
         self.schedule = []

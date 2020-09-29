@@ -3,13 +3,8 @@ __pycache__*
 myconfig.txt
 .vscode
 venv
-.ebignore
 node_modules
 .eslintrc.js
 *.pyc
 app/dist
-
-# Elastic Beanstalk Files
-.elasticbeanstalk/*
-!.elasticbeanstalk/*.cfg.yml
-!.elasticbeanstalk/*.global.yml
+app/static/js/api/v1/aws_credentials.js

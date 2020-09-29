@@ -72,6 +72,17 @@ def std_dev(arr: list) -> float:
 
     return np.std(arr, ddof=1)
 
+# def cdf(x: float, mu: float, sigma: float):
+#     '''Replace for scipy.stats.norm.cdf because I need to keep package size
+#     down for AWS Lambda
+#
+#     Not needed after using AWS 
+#
+#     Cumulative cdf function
+#     Returns probability cdf of x given population with mean and std dev
+#     '''
+#     return (1 + math.erf((x - mu) / sigma / math.sqrt(2))) / 2
+
 
 def win_likelihood(first: float, second: float, std_dev: float) -> float:
     '''Returns win likelihood given 2 scores and a standard deviation
