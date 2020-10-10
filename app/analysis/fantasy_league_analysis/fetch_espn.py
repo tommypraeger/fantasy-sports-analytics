@@ -22,6 +22,9 @@ def fetch_league(league, league_info) -> None:
     league.year = league_info['year']
     league.espn_s2 = league_info['espnS2']
 
+    if league.sport not in sport_map:
+        raise Exception(f'{league.sport} is not a valid sport for ESPN.')
+
     # Necessary ESPN API URLs
     url = (f'https://fantasy.espn.com/apis/v3/games/{sport_map[league.sport]}'
            f'/seasons/{league.year}/segments/0/leagues/{league.id}'

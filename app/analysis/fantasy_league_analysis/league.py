@@ -7,7 +7,10 @@ class League(object):
 
         # Import correct platform API wrapper to import
         platform_path = f'app.analysis.fantasy_league_analysis.fetch_{league_info["platform"]}'
-        platform = import_module(platform_path)
+        try:
+            platform = import_module(platform_path)
+        except ModuleNotFoundError:
+            raise Exception(f'{league_info["platform"]} is not a valid platform.') 
 
         self.sport = ''
         self.id = ''
