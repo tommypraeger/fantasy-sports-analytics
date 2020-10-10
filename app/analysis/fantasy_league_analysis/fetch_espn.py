@@ -47,15 +47,15 @@ def fetch_league(league, league_info) -> None:
         raise Exception('Something went wrong fetching your league. '
                         'Make sure the league ID, year, and sport are correct.')
 
-    resp_json = resp.json()
+    league_json = resp.json()
     matchup_json = matchup_resp.json()
 
-    league.name = resp_json['settings']['name']
-    league.schedule = resp_json['schedule']
-    league.total_matchups = resp_json['settings']['scheduleSettings']['matchupPeriodCount']
+    league.name = league_json['settings']['name']
+    league.schedule = league_json['schedule']
+    league.total_matchups = league_json['settings']['scheduleSettings']['matchupPeriodCount']
     league.curr_matchups_played = get_curr_matchups_played(
         league,
-        resp_json['status']['currentMatchupPeriod']
+        league_json['status']['currentMatchupPeriod']
     )
     get_score_multipliers(league, matchup_json)
 
@@ -63,7 +63,7 @@ def fetch_league(league, league_info) -> None:
     if league.curr_matchups_played < 2:
         raise Exception('There must have been at least 2 matchups played already.')
 
-    teams = resp_json['teams']
+    teams = league_json['teams']
     league.num_teams = len(teams)
 
     for team_info in teams:
