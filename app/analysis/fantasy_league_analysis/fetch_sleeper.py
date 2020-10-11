@@ -19,24 +19,29 @@ def fetch_league(league, league_info) -> None:
     teams_url = f'https://api.sleeper.app/v1/league/{league.id}/rosters'
     users_url = f'https://api.sleeper.app/v1/league/{league.id}/users'
 
-    # Make request and check if it succeeds
-    league_resp = requests.get(league_url)
-    teams_resp = requests.get(teams_url)
-    users_resp = requests.get(users_url)
-    if (league_resp.status_code >= 400 
-        or teams_resp.status_code >= 400
-        or users_resp.status_code >= 400):
-        raise Exception('Something went wrong fetching your league. '
-                        'Make sure your league ID is correct.')
+    with requests.Session() as session:
+        exception_message = ('Something went wrong fetching your league. '
+                             'Make sure your league ID is correct.')
 
-    league_json = league_resp.json()
-    teams = teams_resp.json()
-    users = users_resp.json()
+        # Make requests and check if it succeeds
+        league_resp = session.get(league_url)
+        if league_resp.status_code >= 400:
+            raise Exception(exception_message)
+        teams_resp = session.get(teams_url)
+        if teams_resp.status_code >= 400:
+            raise Exception(exception_message)
+        users_resp = session.get(users_url)
+        if users_resp.status_code >= 400:
+            raise Exception(exception_message)
 
-    league.name = league_json['name']
-    league.total_matchups = league_json['settings']['playoff_week_start'] - 1
-    get_league_schedule(league)
-    league.curr_matchups_played = get_curr_matchups_played(teams[0])
+        league_json = league_resp.json()
+        teams = teams_resp.json()
+        users = users_resp.json()
+
+        league.name = league_json['name']
+        league.total_matchups = league_json['settings']['playoff_week_start'] - 1
+        get_league_schedule(league, session)
+        league.curr_matchups_played = get_curr_matchups_played(teams[0])
 
     # Can't do analysis with less than 2 games played
     if league.curr_matchups_played < 2:
@@ -55,13 +60,13 @@ def fetch_league(league, league_info) -> None:
         get_opponents(team, league)
 
 
-def get_league_schedule(league) -> None:
+def get_league_schedule(league, session) -> None:
     '''Get schedule for league'''
 
     matchups_url = 'https://api.sleeper.app/v1/league/{}/matchups/{}'
 
     for week in range(1, league.total_matchups + 1):
-        matchups = requests.get(matchups_url.format(league.id, week))
+        matchups = session.get(matchups_url.format(league.id, week))
         league.schedule.append(matchups.json())
 
 def perform_team_analysis(league) -> None:

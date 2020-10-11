@@ -38,14 +38,15 @@ def fetch_league(league, league_info) -> None:
     }
 
     # Make request and check if it succeeds
-    resp = requests.get(url, cookies=cookies)
-    matchup_resp = requests.get(matchup_url, cookies=cookies)
-    if resp.status_code == 401 or matchup_resp.status_code == 401:
-        raise Exception('The request to access your league was unauthorized. '
-                        'Make you provide the espn_s2 cookie if your league is private.')
-    if resp.status_code >= 400 or matchup_resp.status_code >= 400:
-        raise Exception('Something went wrong fetching your league. '
-                        'Make sure the league ID, year, and sport are correct.')
+    with requests.Session() as session:
+        resp = session.get(url, cookies=cookies)
+        matchup_resp = session.get(matchup_url, cookies=cookies)
+        if resp.status_code == 401 or matchup_resp.status_code == 401:
+            raise Exception('The request to access your league was unauthorized. '
+                            'Make you provide the espn_s2 cookie if your league is private.')
+        if resp.status_code >= 400 or matchup_resp.status_code >= 400:
+            raise Exception('Something went wrong fetching your league. '
+                            'Make sure the league ID, year, and sport are correct.')
 
     league_json = resp.json()
     matchup_json = matchup_resp.json()

@@ -113,7 +113,7 @@ class TestLambda(unittest.TestCase):
         self.test_league(result)
         result = application.handler(self.event_map['espnbaseball'], {})
         self.test_league(result)
-    
+
     def test_sleeper(self):
         error_events = ['sleeperbadleagueid']
         for event in error_events:
