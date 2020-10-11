@@ -73,7 +73,7 @@ def export_matchup_stats(team, team_dict: dict) -> None:
             'Opponent Average Score': team.opponent_average_scores[week],
             'Opponent Adj. Std. Dev.': team.opponent_std_devs[week],
             'Expected Win %': round(team.win_likelihoods[week] * 100, 2),
-            'Actual Win?': team.matchups[week]['won']
+            'Actual Win?': 'Yes' if team.matchups[week]['won'] else 'No'
         })
 
 
