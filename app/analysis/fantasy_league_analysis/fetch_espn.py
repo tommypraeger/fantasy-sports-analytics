@@ -224,7 +224,7 @@ def get_average_score(team, curr_matchups_played: int) -> float:
     return round(total_score / curr_matchups_played, 2)
 
 
-def is_win(team, matchup: dict, curr_matchups_played: int) -> bool:
+def is_win(team, matchup: dict, curr_matchups_played: int) -> str:
     '''Returns if a team won a matchup'''
 
     # No winner for future games
@@ -234,15 +234,15 @@ def is_win(team, matchup: dict, curr_matchups_played: int) -> bool:
     # Check if team is home or away
     if matchup['away']['teamId'] == team.id:
         if matchup['winner'] == 'AWAY':
-            return True
+            return 'Yes'
     elif matchup['home']['teamId'] == team.id:
         if matchup['winner'] == 'HOME':
-            return True
+            return 'Yes'
     else:
         raise Exception('Failed sanity check. '
                         f'getMatchups returned a matchup team {team.id} isn\'t in')
 
-    return False
+    return 'No'
 
 
 # I slightly increase standard deviation to reduce the confidence of the predictions
