@@ -21,9 +21,11 @@ class TestLambda(unittest.TestCase):
         self.baseball_league_id = '58769671'
         self.espn_s2 = 'AEBZdjDCIUphHU4R2CzpqU0nyreubFNqzmP%2FCzWFwfL%2BCLG%2BxVjYoVuW6poxYdqU8gT3F4ni3GtVrj%2ByB1lzMgSirVPEsly0STsdhOY8yfiPvB4opi7xjJs7x7y2al5hSKwq4L6xHrX%2FBQIOeG2GNUZ0U1ZyOiWFkOlCwpDxZ8wbofUb2wwbj0zicjYcdrnCGF0VT5dxpZZm0jOsvMbMREiAUk8DJkizayo%2FSFPzsAoQvcqSgl9nuciiD3pKwnt8RiXye810jW42eswyhhBN18Kr'
         self.fake_platform = 'notespn'
-        self.fake_league_id = '1234567890'
+        self.fake_league_id = 'fakeleagueid'
         self.fake_sport = 'foosball'
         self.fake_espn_s2 = 'fakes2'
+        self.sleeper = 'sleeper'
+        self.sleeper_league_id = '607346879230963712'
         self.event_map = {
             'badplatform': {
                 'sport': self.football,
@@ -73,6 +75,14 @@ class TestLambda(unittest.TestCase):
                 'leagueId': self.baseball_league_id,
                 'year': '2019',
                 'espnS2': self.espn_s2
+            },
+            'sleeper': {
+                'platform': self.sleeper,
+                'leagueId': self.sleeper_league_id
+            },
+            'sleeperbadleagueid': {
+                'platform': self.sleeper,
+                'leagueId': self.fake_league_id
             }
         }
         self.error_strings = {
@@ -83,7 +93,9 @@ class TestLambda(unittest.TestCase):
             'espnbadleagueid': ('Something went wrong fetching your league. '
                                 'Make sure the league ID, year, and sport are correct.'),
             'espnbads2': ('The request to access your league was unauthorized. '
-                          'Make you provide the espn_s2 cookie if your league is private.')
+                          'Make you provide the espn_s2 cookie if your league is private.'),
+            'sleeperbadleagueid': ('Something went wrong fetching your league. '
+                                   'Make sure your league ID is correct.')
         }
 
     def test_bad_platform(self):
@@ -100,6 +112,14 @@ class TestLambda(unittest.TestCase):
         result = application.handler(self.event_map['espnfootball'], {})
         self.test_league(result)
         result = application.handler(self.event_map['espnbaseball'], {})
+        self.test_league(result)
+    
+    def test_sleeper(self):
+        error_events = ['sleeperbadleagueid']
+        for event in error_events:
+            result = application.handler(self.event_map[event], {})
+            self.assertEqual(result['errorMessage'], self.error_strings[event])
+        result = application.handler(self.event_map['sleeper'], {})
         self.test_league(result)
 
 if __name__ == "__main__":

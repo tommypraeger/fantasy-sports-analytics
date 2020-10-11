@@ -223,7 +223,7 @@ const LeagueAnalysis = () => {
               onChange={(event) => setPlatform(event.target.value)}
             >
               <option value="espn">ESPN</option>
-              {/* <option value="sleeper">Sleeper</option> */}
+              <option value="sleeper">Sleeper</option>
             </Form.Control>
           </Form.Group>
           {form}
