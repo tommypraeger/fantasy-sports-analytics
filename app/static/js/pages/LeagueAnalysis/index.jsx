@@ -16,6 +16,12 @@ import getLambda from '../../api/v1';
 import forms from './forms';
 import utils from './utils';
 
+// Send initial request to Lambda
+const wakeupLambda = () => {
+  const { lambda, params } = getLambda('wakeup-league-analysis', {});
+  lambda.invoke(params, () => {});
+};
+
 // Request league stats from API
 const fetchLeague = ({
   platform,
@@ -155,6 +161,11 @@ const LeagueAnalysis = () => {
     } else {
       setYear(new Date().getFullYear());
     }
+  }, []);
+
+  // Wake up Lambda when page is loaded in case of slow start
+  useEffect(() => {
+    wakeupLambda();
   }, []);
 
   useEffect(() => {

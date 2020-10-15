@@ -13,6 +13,8 @@ class TestLambda(unittest.TestCase):
             self.assertGreater(len(result['teams']), 0),
             self.assertIsInstance(result['teams'][0], dict)
         )
+        self.league_analysis = 'league-analysis'
+        self.wakeup_league_analysis = 'wakeup-league-analysis'
         self.espn = 'espn'
         self.football = 'football'
         self.baseball = 'baseball'
@@ -27,7 +29,11 @@ class TestLambda(unittest.TestCase):
         self.sleeper = 'sleeper'
         self.sleeper_league_id = '607346879230963712'
         self.event_map = {
+            'wakeupleagueanalysis': {
+                'method': self.wakeup_league_analysis,
+            },
             'badplatform': {
+                'method': self.league_analysis,
                 'sport': self.football,
                 'platform': self.fake_platform,
                 'leagueId': self.espn_football_league_id,
@@ -35,6 +41,7 @@ class TestLambda(unittest.TestCase):
                 'espnS2': self.espn_s2
             },
             'espnfootball': {
+                'method': self.league_analysis,
                 'sport': self.football,
                 'platform': self.espn,
                 'leagueId': self.espn_football_league_id,
@@ -42,6 +49,7 @@ class TestLambda(unittest.TestCase):
                 'espnS2': self.espn_s2
             },
             'espnbadyear': {
+                'method': self.league_analysis,
                 'sport': self.football,
                 'platform': self.espn,
                 'leagueId': self.old_espn_league_id,
@@ -49,6 +57,7 @@ class TestLambda(unittest.TestCase):
                 'espnS2': self.espn_s2
             },
             'espnbadsport': {
+                'method': self.league_analysis,
                 'sport': self.fake_sport,
                 'platform': self.espn,
                 'leagueId': self.espn_football_league_id,
@@ -56,6 +65,7 @@ class TestLambda(unittest.TestCase):
                 'espnS2': self.espn_s2
             },
             'espnbadleagueid': {
+                'method': self.league_analysis,
                 'sport': self.football,
                 'platform': self.espn,
                 'leagueId': self.fake_league_id,
@@ -63,6 +73,7 @@ class TestLambda(unittest.TestCase):
                 'espnS2': self.espn_s2
             },
             'espnbads2': {
+                'method': self.league_analysis,
                 'sport': self.football,
                 'platform': self.espn,
                 'leagueId': self.espn_football_league_id,
@@ -70,6 +81,7 @@ class TestLambda(unittest.TestCase):
                 'espnS2': self.fake_espn_s2
             },
             'espnbaseball': {
+                'method': self.league_analysis,
                 'sport': self.baseball,
                 'platform': self.espn,
                 'leagueId': self.baseball_league_id,
@@ -77,10 +89,12 @@ class TestLambda(unittest.TestCase):
                 'espnS2': self.espn_s2
             },
             'sleeper': {
+                'method': self.league_analysis,
                 'platform': self.sleeper,
                 'leagueId': self.sleeper_league_id
             },
             'sleeperbadleagueid': {
+                'method': self.league_analysis,
                 'platform': self.sleeper,
                 'leagueId': self.fake_league_id
             }
@@ -97,6 +111,10 @@ class TestLambda(unittest.TestCase):
             'sleeperbadleagueid': ('Something went wrong fetching your league. '
                                    'Make sure your league ID is correct.')
         }
+
+    def test_wakeup(self):
+        result = application.handler(self.event_map['wakeupleagueanalysis'], {})
+        self.assertEqual(result, {})
 
     def test_bad_platform(self):
         error_events = ['badplatform']

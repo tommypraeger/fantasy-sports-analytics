@@ -11,12 +11,8 @@ const lambda = new AWS.Lambda({
 
 const getLambda = (method, params) => {
   const response = { lambda };
-  switch (method) {
-    case 'league-analysis':
-      response.params = getLeagueAnaylsisParams(params);
-      break;
-    default:
-      response.params = {};
+  if (method === 'league-analysis' || method === 'wakeup-league-analysis') {
+    response.params = getLeagueAnaylsisParams(params, method);
   }
   return response;
 };
