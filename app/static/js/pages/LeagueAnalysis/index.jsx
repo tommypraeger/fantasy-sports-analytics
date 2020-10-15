@@ -314,7 +314,11 @@ const LeagueAnalysis = () => {
       ? (
         <div className="league-analysis-page">
           <div className="page-title">
-            <h2>Expected Standings</h2>
+            <h2>
+              {league.name}
+              {' '}
+              Expected Standings
+            </h2>
             {resetLeagueButton}
           </div>
           <Table
