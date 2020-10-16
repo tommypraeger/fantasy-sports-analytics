@@ -111,6 +111,16 @@ const sleeperForm = ({ leagueId, setLeagueId }) => (
   <div>
     <Form.Group controlId="sleeperLeagueId">
       <Form.Label>League ID</Form.Label>
+      <div className="help-tip">
+        <p>
+            League ID is how Sleeper uniquely identifies fantasy leagues.
+            Click
+          {' '}
+          <a href="/faqs#sleeper-league-id">here</a>
+          {' '}
+            for more information on how to find it.
+        </p>
+      </div>
       <Form.Control
         name="leagueId"
         value={leagueId}

@@ -4,6 +4,7 @@ import Card from 'react-bootstrap/Card';
 import NavBar from '../components/NavBar';
 
 import espnLeagueId from '../../images/espn_league_id.png';
+import sleeperLeagueId from '../../images/sleeper_league_id.png';
 import viewCookies from '../../images/view_cookies.png';
 import viewCookies2 from '../../images/view_cookies2.png';
 import espnS2 from '../../images/espn_s2.png';
@@ -100,25 +101,22 @@ const FAQs = () => {
               I figure the probability of ending with each number of wins, given how many wins
               {' '}
               you currently have.
-            </Card.Body>
-          </Accordion.Collapse>
-        </Card>
-        <Card className="faq">
-          <Accordion.Toggle as={Card.Header} eventKey="how-calculate">
-            Wait, doesn&apos;t that violate a ton of statistical assumptions?
-          </Accordion.Toggle>
-          <Accordion.Collapse eventKey="how-calculate">
-            <Card.Body>
+              <br />
+              <br />
+              You might be thinking &quot;wait, doesn&apos;t that violate a ton of
+              {' '}
+              statistical assumptions?&quot;
+              <br />
               Well, yes, but it&apos;s no fun if I don&apos;t violate any statistical assumptions!
               <br />
               Fantasy scores cannot be accurately represented as random variables
-
+              {' '}
               for a slew of reasons (injuries, varying lineups, owner effort), and that I am
-
+              {' '}
               using a very small sample size for scores, so I try to reduce the confidence
-
+              {' '}
               of the win probabilities by slightly adjusting the standard deviation of the scores
-
+              {' '}
               upwards, with bigger adjustments earlier in the season.
             </Card.Body>
           </Accordion.Collapse>
@@ -132,6 +130,12 @@ const FAQs = () => {
               You can find your league ID by going to your league home on ESPN and looking
               {' '}
               at the URL for the leagueId.
+              <br />
+              <br />
+              Unfortunately, you can&apos;t access the league ID from the app, so you&apos;ll
+              {' '}
+              have to go to the website.
+              <br />
               <br />
               <img src={espnLeagueId} alt="ESPN league ID example" />
             </Card.Body>
@@ -148,25 +152,51 @@ const FAQs = () => {
               click the lock to the left of the URL.
               {' '}
               <br />
+              <br />
               <img src={viewCookies} alt="Click lock example" />
+              <br />
               <br />
               Then, click &quot;Cookies&quot;.
               <br />
+              <br />
               <img src={viewCookies2} alt="Open cookies example" width="320" />
+              <br />
               <br />
               Then, scroll down to espn.com and find the espn_s2 cookie. Copy and paste the whole
               {' '}
               thing from the &quot;Content&quot; field.
               <br />
+              <br />
               <img src={espnS2} alt="espn_s2 example" width="441" />
               <br />
-              It is really long, much longer than you can see in the screenshot, so make sure
+              <br />
+              It is really long (much longer than you can see in the screenshot) so make sure
               {' '}
               you get all of it.
               <br />
               This is just a cookie ESPN uses for authentication and I can&apos;t access private
               {' '}
-              leagues without. I promise I can&apos;t actually do anything malicious with it :)
+              leagues without. I promise I won&apos;t try to do anything malicious with it :)
+            </Card.Body>
+          </Accordion.Collapse>
+        </Card>
+        <Card className="faq">
+          <Accordion.Toggle as={Card.Header} eventKey="sleeper-league-id">
+            How do you figure out your Sleeper league ID?
+          </Accordion.Toggle>
+          <Accordion.Collapse eventKey="sleeper-league-id">
+            <Card.Body>
+              You can find your league ID by going to your league home on Sleeper and looking
+              {' '}
+              at the URL for the leagueId.
+              <br />
+              <br />
+              Unfortunately, you can&apos;t access the league ID from the app, so you&apos;ll
+              {' '}
+              have to go to the website.
+              <br />
+              <br />
+              <img src={sleeperLeagueId} alt="Sleeper league ID example" />
             </Card.Body>
           </Accordion.Collapse>
         </Card>
@@ -176,11 +206,14 @@ const FAQs = () => {
           </Accordion.Toggle>
           <Accordion.Collapse eventKey="other-platforms-sports">
             <Card.Body>
-              Yes, but no promises on when those come. I unfortunately don&apos;t have a ton
+              Maybe, but no promises. I unfortunately don&apos;t have a ton of time to work
               {' '}
-              of time to work on this. Hopefully, I can also add more pages besides just
+              on this. Hopefully, I can also add more pages besides just league analysis.
+              <br />
+              <br />
+              I only have leagues on ESPN and Sleeper, so those were the easiest for me to
               {' '}
-              league analysis.
+              figure out and test with.
             </Card.Body>
           </Accordion.Collapse>
         </Card>
