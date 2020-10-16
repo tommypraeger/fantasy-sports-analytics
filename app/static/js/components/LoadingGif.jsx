@@ -1,17 +1,12 @@
 import React from 'react';
 
-const LoadingGif = ({ fetchesInProgress }) => {
-  const loadingGif = (
-    <div className="lds-ring">
-      <div />
-      <div />
-      <div />
-      <div />
-    </div>
-  );
-  return fetchesInProgress > 0
-    ? loadingGif
-    : <div />;
-};
+const LoadingGif = () => (
+  <div className="lds-ring">
+    <div />
+    <div />
+    <div />
+    <div />
+  </div>
+);
 
 export default LoadingGif;

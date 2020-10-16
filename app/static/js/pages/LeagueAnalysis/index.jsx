@@ -114,6 +114,8 @@ const LeagueAnalysis = () => {
   const [errorMessage, setErrorMessage] = useState('');
   const [fetchesInProgress, setFetchesInProgress] = useState(0);
   const [response, setResponse] = useState({});
+  const [fetchSeconds, setFetchSeconds] = useState(0);
+  const [counterId, setCounterId] = useState(0);
 
   const state = {
     fetchedLeague,
@@ -146,6 +148,8 @@ const LeagueAnalysis = () => {
     setFetchesInProgress,
     response,
     setResponse,
+    fetchSeconds,
+    setFetchSeconds,
   };
 
   useEffect(() => {
@@ -183,6 +187,16 @@ const LeagueAnalysis = () => {
   }, [response]);
 
   useEffect(() => {
+    if (fetchesInProgress > 0) {
+      // Note: I don't understand why I can't just pass fetchSeconds + 1 to setFetchSeconds()
+      setCounterId(setInterval(() => setFetchSeconds((seconds) => seconds + 1), 1000));
+    } else {
+      clearInterval(counterId);
+      setFetchSeconds(0);
+    }
+  }, [fetchesInProgress]);
+
+  useEffect(() => {
     if (fetchedLeague && view !== 'league') {
       utils.colorMatchupsTable();
     }
@@ -216,32 +230,57 @@ const LeagueAnalysis = () => {
         form = forms.espnForm(validYears, state);
     }
 
-    // Return config form
-    returnedPage = (
-      <div>
-        <LoadingGif fetchesInProgress={fetchesInProgress} />
-        <Form
-          className="form"
-          noValidate
-          onSubmit={(event) => validateLeagueInputs(event, state)}
-        >
-          <Form.Group>
-            <Form.Label>Platform</Form.Label>
-            <Form.Control
-              name="platform"
-              value={platform}
-              as="select"
-              onChange={(event) => setPlatform(event.target.value)}
-            >
-              <option value="espn">ESPN</option>
-              <option value="sleeper">Sleeper</option>
-            </Form.Control>
-          </Form.Group>
-          {form}
-          <Button type="submit">Submit</Button>
-        </Form>
-      </div>
-    );
+    if (fetchesInProgress > 0) {
+      // Show loading screen
+      returnedPage = (
+        <div>
+          <LoadingGif />
+          <div className="loading-message-box">
+            Fetching league...
+            <br />
+            <br />
+            Request has been active for
+            {' '}
+            {fetchSeconds}
+            {' '}
+            seconds.
+            <br />
+            <br />
+            If nothing happens after about a minute, there may be an issue.
+            {' '}
+            You can try refreshing, but if it fails multiple times, there may be something
+            {' '}
+            wrong with the platform&apos;s API or my code (hopefully not).
+          </div>
+        </div>
+      );
+    } else {
+      // Return config form
+      returnedPage = (
+        <div>
+          <Form
+            className="form"
+            noValidate
+            onSubmit={(event) => validateLeagueInputs(event, state)}
+          >
+            <Form.Group>
+              <Form.Label>Platform</Form.Label>
+              <Form.Control
+                name="platform"
+                value={platform}
+                as="select"
+                onChange={(event) => setPlatform(event.target.value)}
+              >
+                <option value="espn">ESPN</option>
+                <option value="sleeper">Sleeper</option>
+              </Form.Control>
+            </Form.Group>
+            {form}
+            <Button type="submit">Submit</Button>
+          </Form>
+        </div>
+      );
+    }
   } else if (fetchedLeague) {
     // Return league page
     const sideNav = (
