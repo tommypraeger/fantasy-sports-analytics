@@ -70,6 +70,23 @@ const setLeagueAfterFetch = ({
   setFetchesInProgress(fetchesInProgress - 1);
 };
 
+const buildUrl = (state, view) => {
+  // Should always have a platform
+  let url = `?platform=${state.platform}`;
+  // Build URL for platform
+  if (state.platform === 'espn') {
+    url += `&sport=${state.sport}`;
+    url += `&leagueId=${state.leagueId}`;
+    url += `&year=${state.year}`;
+    if (state.isPrivateLeague) url += `&espnS2=${state.espnS2}`;
+  } else if (state.platform === 'sleeper') {
+    url += `&leagueId=${state.leagueId}`;
+  }
+  // Should always have a view
+  url += `&view=${view}`;
+  return url;
+};
+
 // Check form validation
 const validateLeagueInputs = (event, state) => {
   event.preventDefault();
@@ -79,8 +96,7 @@ const validateLeagueInputs = (event, state) => {
     return;
   }
 
-  const newUrl = `?platform=${state.platform}&sport=${state.sport}&leagueId=${state.leagueId}`
-      + `&year=${state.year}&espnS2=${state.espnS2}&view=${state.view}`;
+  const newUrl = buildUrl(state, state.view);
   window.history.pushState({}, '', newUrl);
   fetchLeague(state);
 };
@@ -92,9 +108,7 @@ const resetLeague = () => {
 
 const setViewAndUpdateUrl = (view, setView, state) => {
   setView(view);
-  const newUrl = `?platform=${state.platform}&sport=${state.sport}`
-      + `&leagueId=${state.leagueId}&year=${state.year}`
-      + `&espnS2=${state.espnS2}&view=${view}`;
+  const newUrl = buildUrl(state, view);
   window.history.pushState({}, '', newUrl);
 };
 
@@ -156,12 +170,12 @@ const LeagueAnalysis = () => {
     setCurrentYear(new Date().getFullYear());
     if (window.location.search) {
       const urlParams = querySearch(window.location.search);
-      setPlatform(urlParams.platform);
-      setSport(urlParams.sport);
-      setLeagueId(urlParams.leagueId);
-      setYear(urlParams.year);
-      setEspnS2(urlParams.espnS2);
-      setView(decodeURI(urlParams.view));
+      if (urlParams.platform) setPlatform(urlParams.platform);
+      if (urlParams.sport) setSport(urlParams.sport);
+      if (urlParams.leagueId) setLeagueId(urlParams.leagueId);
+      if (urlParams.year) setYear(urlParams.year);
+      if (urlParams.espnS2) setEspnS2(urlParams.espnS2);
+      if (urlParams.view) setView(decodeURI(urlParams.view));
     } else {
       setYear(new Date().getFullYear());
     }
@@ -173,9 +187,14 @@ const LeagueAnalysis = () => {
   }, []);
 
   useEffect(() => {
-    if (window.location.search
-        && platform && sport && leagueId && year
-        && (platform !== 'espn' || !isPrivateLeague || espnS2)) {
+    const espnCond = (
+      platform === 'espn' && sport && leagueId && year && (!isPrivateLeague || espnS2)
+    );
+    const sleeperCond = (
+      platform === 'sleeper' && leagueId
+    );
+    if (window.location.search && platform
+        && (espnCond || sleeperCond)) {
       fetchLeague(state);
     }
   }, [platform, sport, leagueId, year, espnS2, isPrivateLeague]);
@@ -284,11 +303,11 @@ const LeagueAnalysis = () => {
   } else if (fetchedLeague) {
     // Return league page
     const sideNav = (
-      <Nav defaultActiveKey="/home" className="flex-column side-nav">
+      <Nav className="flex-column side-nav">
         <Nav.Item
           onClick={() => setViewAndUpdateUrl('league', setView, state)}
         >
-            League
+          League
         </Nav.Item>
         {
           teams.map((team) => (
