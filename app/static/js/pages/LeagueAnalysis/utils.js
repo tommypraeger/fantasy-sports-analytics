@@ -37,6 +37,8 @@ const colorMatchupsTable = () => {
           tableRow.children[wonIndex].style.backgroundColor = 'rgba(0,255,0,0.5)';
         } else if (tableRow.children[wonIndex].innerText === 'No') {
           tableRow.children[wonIndex].style.backgroundColor = 'rgba(255,0,0,0.5)';
+        } else if (tableRow.children[wonIndex].innerText === 'Tie') {
+          tableRow.children[wonIndex].style.backgroundColor = 'rgba(255,255,0,0.5)';
         }
       }
     }

@@ -68,7 +68,7 @@ def export_matchup_stats(team, team_dict: dict) -> None:
     for week in range(total_matchups):
         team_dict['matchup_table'].append({
             'Week': week + 1,
-            'Points For': team.scores[week] if week < curr_matchups_played else None,
+            'Points For': round(team.scores[week], 2) if week < curr_matchups_played else None,
             'Opponent': team.opponents[week].name,
             'Opponent Average Score': team.opponent_average_scores[week],
             'Opponent Adj. Std. Dev.': team.opponent_std_devs[week],

@@ -96,7 +96,8 @@ def get_team_metadata(team, team_info: dict, users: list, league) -> None:
 
     team.id = team_info['roster_id']
     team.name = get_user_name(users, team_info['owner_id'])
-    team.wins = team_info['settings']['wins']
+    # adding half-wins for ties messes with win total projections
+    team.wins = team_info['settings']['wins'] # + 0.5 * team_info['settings']['ties']
     get_matchups(team, league)
     team.average_score = get_average_score(team, league.curr_matchups_played)
     team.score_std_dev = get_adj_std_dev(team, league.curr_matchups_played)
@@ -184,8 +185,9 @@ def is_win(team, matchup_id: int, matchups: list, week: int, curr_matchups_playe
 
     if points_for > points_against:
         return 'Yes'
-    else:
+    if points_for < points_against:
         return 'No'
+    return 'Tie'
 
 
 # I slightly increase standard deviation to reduce the confidence of the predictions
