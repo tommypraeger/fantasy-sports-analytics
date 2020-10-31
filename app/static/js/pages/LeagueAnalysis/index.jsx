@@ -328,7 +328,7 @@ const LeagueAnalysis = () => {
         onClick={resetLeague}
         className="reset-league-btn"
       >
-          Re-enter League Info
+        Re-enter League Info
       </Button>
     );
 
