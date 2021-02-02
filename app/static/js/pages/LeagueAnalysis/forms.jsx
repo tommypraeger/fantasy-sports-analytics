@@ -31,12 +31,12 @@ const espnForm = (validYears, {
       <Form.Label>League ID</Form.Label>
       <div className="help-tip">
         <p>
-              League ID is how ESPN uniquely identifies fantasy leagues.
-              Click
+          League ID is how ESPN uniquely identifies fantasy leagues.
+          Click
           {' '}
           <a href="/faqs#espn-league-id">here</a>
           {' '}
-              for more information on how to find it.
+          for more information on how to find it.
         </p>
       </div>
       <Form.Control
@@ -47,7 +47,7 @@ const espnForm = (validYears, {
         required
       />
       <Form.Control.Feedback type="invalid">
-            Please provide a league ID.
+        Please provide a league ID.
       </Form.Control.Feedback>
     </Form.Group>
     <Form.Group controlId="espnYear">
@@ -60,10 +60,10 @@ const espnForm = (validYears, {
         required
       >
         {
-              validYears.map((validYear) => (
-                <option value={validYear} key={validYear}>{validYear}</option>
-              ))
-            }
+          validYears.map((validYear) => (
+            <option value={validYear} key={validYear}>{validYear}</option>
+          ))
+        }
       </Form.Control>
     </Form.Group>
     <Form.Group controlId="espnIsPrivateLeague">
@@ -72,8 +72,7 @@ const espnForm = (validYears, {
         value={isPrivateLeague}
         onChange={(event) => setIsPrivateLeague(event.target.checked)}
         label="This is a private league"
-      >
-      </Form.Check>
+      />
     </Form.Group>
     {!isPrivateLeague ? ''
       : (
@@ -82,13 +81,13 @@ const espnForm = (validYears, {
             <Form.Label>espn_s2</Form.Label>
             <div className="help-tip">
               <p>
-                  espn_s2 is a cookie that ESPN uses for authentication.
-                  I need to use it to access private leagues.
-                  Click
+                espn_s2 is a cookie that ESPN uses for authentication.
+                I need to use it to access private leagues.
+                Click
                 {' '}
                 <a href="/faqs#espn-s2">here</a>
                 {' '}
-                  for more information on how to find it.
+                for more information on how to find it.
               </p>
             </div>
             <Form.Control
@@ -99,7 +98,7 @@ const espnForm = (validYears, {
               required
             />
             <Form.Control.Feedback type="invalid">
-                Please provide the espn_s2 cookie for private leagues.
+              Please provide the espn_s2 cookie for private leagues.
             </Form.Control.Feedback>
           </Form.Group>
         </div>
@@ -113,12 +112,12 @@ const sleeperForm = ({ leagueId, setLeagueId }) => (
       <Form.Label>League ID</Form.Label>
       <div className="help-tip">
         <p>
-            League ID is how Sleeper uniquely identifies fantasy leagues.
-            Click
+          League ID is how Sleeper uniquely identifies fantasy leagues.
+          Click
           {' '}
           <a href="/faqs#sleeper-league-id">here</a>
           {' '}
-            for more information on how to find it.
+          for more information on how to find it.
         </p>
       </div>
       <Form.Control
@@ -129,7 +128,7 @@ const sleeperForm = ({ leagueId, setLeagueId }) => (
         required
       />
       <Form.Control.Feedback type="invalid">
-          Please provide a league ID.
+        Please provide a league ID.
       </Form.Control.Feedback>
     </Form.Group>
   </div>

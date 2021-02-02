@@ -14,7 +14,7 @@ import FAQs from './pages/FAQs';
 
 const NotFound = () => (
   <div>
-      The page you are looking for does not exist.
+    The page you are looking for does not exist.
   </div>
 );
 
