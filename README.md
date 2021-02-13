@@ -8,7 +8,7 @@ You can use the site here: [fantasy-sports-analytics.com](https://fantasy-sports
 Mobile-friendly
 Add platforms/sports
 Add other pages
-Unit tests
+More tests
 
 ## Acknowledgements:
 Looked at this for API implementation ideas: [https://github.com/rbarton65/espnff](https://github.com/rbarton65/espnff)

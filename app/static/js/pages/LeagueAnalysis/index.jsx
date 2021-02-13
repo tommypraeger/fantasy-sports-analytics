@@ -19,7 +19,7 @@ import utils from './utils';
 // Send initial request to Lambda
 const wakeupLambda = () => {
   const { lambda, params } = getLambda('wakeup-league-analysis', {});
-  lambda.invoke(params, () => {});
+  lambda.invoke(params, () => { });
 };
 
 // Request league stats from API
@@ -194,7 +194,7 @@ const LeagueAnalysis = () => {
       platform === 'sleeper' && leagueId
     );
     if (window.location.search && platform
-        && (espnCond || sleeperCond)) {
+      && (espnCond || sleeperCond)) {
       fetchLeague(state);
     }
   }, [platform, sport, leagueId, year, espnS2, isPrivateLeague]);

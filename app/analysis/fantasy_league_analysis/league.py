@@ -10,7 +10,7 @@ class League(object):
         try:
             platform = import_module(platform_path)
         except ModuleNotFoundError:
-            raise Exception(f'{league_info["platform"]} is not a valid platform.') 
+            raise Exception(f'{league_info["platform"]} is not a valid platform.')
 
         self.sport = ''
         self.id = ''

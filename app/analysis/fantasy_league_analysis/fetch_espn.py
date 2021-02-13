@@ -10,7 +10,8 @@ from app.analysis.fantasy_league_analysis.team import Team
 
 sport_map = {
     'football': 'ffl',
-    'baseball': 'flb'
+    'baseball': 'flb',
+    'basketball': 'fba',
 }
 
 
