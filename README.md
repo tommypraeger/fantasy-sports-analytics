@@ -5,10 +5,10 @@ Welcome to my repository for my fantasy sports analytics site!
 You can use the site here: [fantasy-sports-analytics.com](https://fantasy-sports-analytics.com)
 
 ## Future Work
-Mobile-friendly
-Add platforms/sports
-Add other pages
-More tests
+- Mobile-friendly
+- Add platforms/sports
+- Add other pages
+- More tests
 
 ## Acknowledgements:
 Looked at this for API implementation ideas: [https://github.com/rbarton65/espnff](https://github.com/rbarton65/espnff)
