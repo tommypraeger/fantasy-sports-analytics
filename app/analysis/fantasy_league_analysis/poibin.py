@@ -85,9 +85,9 @@ class PoiBin(object):
         self.pmf_list = self.get_pmf_xi()
         self.cdf_list = self.get_cdf(self.pmf_list)
 
-# ------------------------------------------------------------------------------
-# Methods for the Poisson Binomial Distribution
-# ------------------------------------------------------------------------------
+    # ------------------------------------------------------------------------------
+    # Methods for the Poisson Binomial Distribution
+    # ------------------------------------------------------------------------------
 
     def pmf(self, number_successes):
         """Calculate the probability mass function ``pmf`` for the input values.
@@ -150,10 +150,10 @@ class PoiBin(object):
         i = 0
         try:
             isinstance(number_successes, collections.Iterable)
-            pvalues = np.array(number_successes, dtype='float')
+            pvalues = np.array(number_successes, dtype="float")
             # if input is iterable (list, numpy.array):
             for k in number_successes:
-                pvalues[i] = 1. - self.cdf(k) + self.pmf(k)
+                pvalues[i] = 1.0 - self.cdf(k) + self.pmf(k)
                 i += 1
             return pvalues
         except TypeError:
@@ -163,9 +163,9 @@ class PoiBin(object):
             else:
                 return 1 - self.cdf(number_successes - 1)
 
-# ------------------------------------------------------------------------------
-# Methods to obtain pmf and cdf
-# ------------------------------------------------------------------------------
+    # ------------------------------------------------------------------------------
+    # Methods to obtain pmf and cdf
+    # ------------------------------------------------------------------------------
 
     def get_cdf(self, event_probabilities):
         """Return the values of the cumulative density function.
@@ -190,14 +190,15 @@ class PoiBin(object):
         """
         chi = np.empty(self.number_trials + 1, dtype=complex)
         chi[0] = 1
-        half_number_trials = int(
-            self.number_trials / 2 + self.number_trials % 2)
+        half_number_trials = int(self.number_trials / 2 + self.number_trials % 2)
         # set first half of chis:
-        chi[1:half_number_trials + 1] = self.get_chi(
-            np.arange(1, half_number_trials + 1))
+        chi[1 : half_number_trials + 1] = self.get_chi(
+            np.arange(1, half_number_trials + 1)
+        )
         # set second half of chis:
-        chi[half_number_trials + 1:self.number_trials + 1] = np.conjugate(
-            chi[1:self.number_trials - half_number_trials + 1] [::-1])
+        chi[half_number_trials + 1 : self.number_trials + 1] = np.conjugate(
+            chi[1 : self.number_trials - half_number_trials + 1][::-1]
+        )
         chi /= self.number_trials + 1
         xi = np.fft.fft(chi)
         if self.check_xi_are_real(xi):
@@ -216,8 +217,11 @@ class PoiBin(object):
         """
         # get_z:
         exp_value = np.exp(self.omega * idx_array * 1j)
-        xy = 1 - self.success_probabilities + \
-            self.success_probabilities * exp_value[:, np.newaxis]
+        xy = (
+            1
+            - self.success_probabilities
+            + self.success_probabilities * exp_value[:, np.newaxis]
+        )
         # sum over the principal values of the arguments of z:
         argz_sum = np.arctan2(xy.imag, xy.real).sum(axis=1)
         # get d value:
@@ -227,9 +231,9 @@ class PoiBin(object):
         chi = d_value * np.exp(argz_sum * 1j)
         return chi
 
-# ------------------------------------------------------------------------------
-# Auxiliary functions
-# ------------------------------------------------------------------------------
+    # ------------------------------------------------------------------------------
+    # Auxiliary functions
+    # ------------------------------------------------------------------------------
 
     def check_rv_input(self, number_successes):
         """Assert that the input values ``number_successes`` are OK.
@@ -239,22 +243,25 @@ class PoiBin(object):
         number of trials ``self.number_trials``.
 
         :param number_successes: number of successful trials
-        :type number_successes: int or list of integers """
+        :type number_successes: int or list of integers"""
         try:
             for k in number_successes:
-                assert (type(k) == int or type(k) == np.int64), \
-                        "Values in input list must be integers"
-                assert k >= 0, 'Values in input list cannot be negative.'
-                assert k <= self.number_trials, \
-                    'Values in input list must be smaller or equal to the ' \
+                assert (
+                    type(k) == int or type(k) == np.int64
+                ), "Values in input list must be integers"
+                assert k >= 0, "Values in input list cannot be negative."
+                assert k <= self.number_trials, (
+                    "Values in input list must be smaller or equal to the "
                     'number of input probabilities "n"'
+                )
         except TypeError:
-            assert (type(number_successes) == int or \
-                type(number_successes) == np.int64), \
-                'Input value must be an integer.'
+            assert (
+                type(number_successes) == int or type(number_successes) == np.int64
+            ), "Input value must be an integer."
             assert number_successes >= 0, "Input value cannot be negative."
-            assert number_successes <= self.number_trials, \
-                'Input value cannot be greater than ' + str(self.number_trials)
+            assert (
+                number_successes <= self.number_trials
+            ), "Input value cannot be greater than " + str(self.number_trials)
         return True
 
     @staticmethod
@@ -272,12 +279,12 @@ class PoiBin(object):
     def check_input_prob(self):
         """Check that all the input probabilities are in the interval [0, 1]."""
         if self.success_probabilities.shape != (self.number_trials,):
-            raise ValueError(
-                "Input must be an one-dimensional array or a list.")
+            raise ValueError("Input must be an one-dimensional array or a list.")
         if not np.all(self.success_probabilities >= 0):
             raise ValueError("Input probabilities have to be non negative.")
         if not np.all(self.success_probabilities <= 1):
             raise ValueError("Input probabilities have to be smaller than 1.")
+
 
 ################################################################################
 # Main

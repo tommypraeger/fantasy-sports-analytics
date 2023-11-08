@@ -1,8 +1,8 @@
 class Team(object):
     def __init__(self) -> None:
-        '''Team metadata'''
+        """Team metadata"""
 
-        self.name = ''
+        self.name = ""
         self.id = 0
         self.scores = []
         self.average_score = 0

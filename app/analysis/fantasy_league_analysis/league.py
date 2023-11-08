@@ -3,20 +3,22 @@ from importlib import import_module
 
 class League(object):
     def __init__(self, league_info: dict):
-        '''League metadata and auth info'''
+        """League metadata and auth info"""
 
         # Import correct platform API wrapper to import
-        platform_path = f'app.analysis.fantasy_league_analysis.fetch_{league_info["platform"]}'
+        platform_path = (
+            f'app.analysis.fantasy_league_analysis.fetch_{league_info["platform"]}'
+        )
         try:
             platform = import_module(platform_path)
         except ModuleNotFoundError:
             raise Exception(f'{league_info["platform"]} is not a valid platform.')
 
-        self.sport = ''
-        self.id = ''
-        self.year = ''
-        self.espn_s2 = ''
-        self.name = ''
+        self.sport = ""
+        self.id = ""
+        self.year = ""
+        self.espn_s2 = ""
+        self.name = ""
         self.schedule = []
         self.teams = []
         self.team_map = {}
@@ -29,11 +31,11 @@ class League(object):
         platform.perform_team_analysis(self)
 
         self.teams.sort(
-            key=lambda team: sum(team.win_likelihoods[:self.curr_matchups_played]),
-            reverse=True
+            key=lambda team: sum(team.win_likelihoods[: self.curr_matchups_played]),
+            reverse=True,
         )
 
     def get_team(self, teamId: int):
-        '''Return a team object given a team id'''
+        """Return a team object given a team id"""
 
         return self.team_map[teamId]
