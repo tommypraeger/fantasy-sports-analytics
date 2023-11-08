@@ -1,22 +1,18 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
+import React from "react";
+import ReactDOM from "react-dom";
 import {
   BrowserRouter as Router,
   Route,
   Redirect,
   Switch,
-} from 'react-router-dom';
+} from "react-router-dom";
 
 // eslint-disable-next-line no-unused-vars
-import styles from '../css/base.scss';
-import LeagueAnalysis from './pages/LeagueAnalysis';
-import FAQs from './pages/FAQs';
+import styles from "../css/base.scss";
+import LeagueAnalysis from "./pages/LeagueAnalysis";
+import FAQs from "./pages/FAQs";
 
-const NotFound = () => (
-  <div>
-    The page you are looking for does not exist.
-  </div>
-);
+const NotFound = () => <div>The page you are looking for does not exist.</div>;
 
 const App = () => (
   <Router>
@@ -29,4 +25,4 @@ const App = () => (
   </Router>
 );
 
-ReactDOM.render(<App />, document.getElementById('app-container'));
+ReactDOM.render(<App />, document.getElementById("app-container"));

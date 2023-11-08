@@ -1,12 +1,17 @@
 /* eslint-disable react/no-array-index-key */
-import React from 'react';
-import ReactTable from 'react-bootstrap/Table';
-import PropTypes from 'prop-types';
+import React from "react";
+import ReactTable from "react-bootstrap/Table";
+import PropTypes from "prop-types";
 
-const Table = ({
-  data, columns, id, className,
-}) => (
-  <ReactTable id={id} className={className} striped bordered hover variant="dark">
+const Table = ({ data, columns, id, className }) => (
+  <ReactTable
+    id={id}
+    className={className}
+    striped
+    bordered
+    hover
+    variant="dark"
+  >
     <thead>
       <tr>
         {columns.map((columnName, i) => (
@@ -18,9 +23,7 @@ const Table = ({
       {data.map((row, i) => (
         <tr key={`row-${i}`}>
           {columns.map((columnName, j) => (
-            <td key={`cell-${i * j + j}`}>
-              {row[columnName]}
-            </td>
+            <td key={`cell-${i * j + j}`}>{row[columnName]}</td>
           ))}
         </tr>
       ))}
@@ -34,8 +37,8 @@ Table.propTypes = {
   className: PropTypes.string,
 };
 Table.defaultProps = {
-  id: '',
-  className: '',
+  id: "",
+  className: "",
 };
 
 export default Table;

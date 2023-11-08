@@ -1,25 +1,25 @@
 /* eslint-disable react/prop-types */
-import querySearch from 'stringquery';
+import querySearch from "stringquery";
 
-import React, { useState, useEffect } from 'react';
-import Button from 'react-bootstrap/Button';
-import Form from 'react-bootstrap/Form';
-import Nav from 'react-bootstrap/Nav';
+import React, { useState, useEffect } from "react";
+import Button from "react-bootstrap/Button";
+import Form from "react-bootstrap/Form";
+import Nav from "react-bootstrap/Nav";
 
-import LoadingGif from '../../components/LoadingGif';
-import Table from '../../components/Table';
-import BarGraph from '../../components/Graph';
-import NavBar from '../../components/NavBar';
+import LoadingGif from "../../components/LoadingGif";
+import Table from "../../components/Table";
+import BarGraph from "../../components/Graph";
+import NavBar from "../../components/NavBar";
 
-import getLambda from '../../api/v1';
+import getLambda from "../../api/v1";
 
-import forms from './forms';
-import utils from './utils';
+import forms from "./forms";
+import utils from "./utils";
 
 // Send initial request to Lambda
 const wakeupLambda = () => {
-  const { lambda, params } = getLambda('wakeup-league-analysis', {});
-  lambda.invoke(params, () => { });
+  const { lambda, params } = getLambda("wakeup-league-analysis", {});
+  lambda.invoke(params, () => {});
 };
 
 // Request league stats from API
@@ -34,7 +34,7 @@ const fetchLeague = ({
   setResponse,
 }) => {
   setFetchesInProgress(fetchesInProgress + 1);
-  const { lambda, params } = getLambda('league-analysis', {
+  const { lambda, params } = getLambda("league-analysis", {
     platform,
     sport,
     leagueId,
@@ -74,12 +74,12 @@ const buildUrl = (state, view) => {
   // Should always have a platform
   let url = `?platform=${state.platform}`;
   // Build URL for platform
-  if (state.platform === 'espn') {
+  if (state.platform === "espn") {
     url += `&sport=${state.sport}`;
     url += `&leagueId=${state.leagueId}`;
     url += `&year=${state.year}`;
     if (state.isPrivateLeague) url += `&espnS2=${state.espnS2}`;
-  } else if (state.platform === 'sleeper') {
+  } else if (state.platform === "sleeper") {
     url += `&leagueId=${state.leagueId}`;
   }
   // Should always have a view
@@ -92,12 +92,12 @@ const validateLeagueInputs = (event, state) => {
   event.preventDefault();
   if (event.currentTarget.checkValidity() === false) {
     event.stopPropagation();
-    event.currentTarget.classList.add('was-validated');
+    event.currentTarget.classList.add("was-validated");
     return;
   }
 
   const newUrl = buildUrl(state, state.view);
-  window.history.pushState({}, '', newUrl);
+  window.history.pushState({}, "", newUrl);
   fetchLeague(state);
 };
 
@@ -109,23 +109,23 @@ const resetLeague = () => {
 const setViewAndUpdateUrl = (view, setView, state) => {
   setView(view);
   const newUrl = buildUrl(state, view);
-  window.history.pushState({}, '', newUrl);
+  window.history.pushState({}, "", newUrl);
 };
 
 const LeagueAnalysis = () => {
   const [fetchedLeague, setFetchedLeague] = useState(false);
   const [league, setLeague] = useState({});
   const [teams, setTeams] = useState([]);
-  const [view, setView] = useState('league');
-  const [platform, setPlatform] = useState('espn');
-  const [sport, setSport] = useState('football');
-  const [leagueId, setLeagueId] = useState('');
-  const [currentYear, setCurrentYear] = useState('');
-  const [year, setYear] = useState('');
-  const [espnS2, setEspnS2] = useState('');
+  const [view, setView] = useState("league");
+  const [platform, setPlatform] = useState("espn");
+  const [sport, setSport] = useState("football");
+  const [leagueId, setLeagueId] = useState("");
+  const [currentYear, setCurrentYear] = useState("");
+  const [year, setYear] = useState("");
+  const [espnS2, setEspnS2] = useState("");
   const [isPrivateLeague, setIsPrivateLeague] = useState(false);
   const [requestFailed, setRequestFailed] = useState(false);
-  const [errorMessage, setErrorMessage] = useState('');
+  const [errorMessage, setErrorMessage] = useState("");
   const [fetchesInProgress, setFetchesInProgress] = useState(0);
   const [response, setResponse] = useState({});
   const [fetchSeconds, setFetchSeconds] = useState(0);
@@ -187,14 +187,14 @@ const LeagueAnalysis = () => {
   }, []);
 
   useEffect(() => {
-    const espnCond = (
-      platform === 'espn' && sport && leagueId && year && (!isPrivateLeague || espnS2)
-    );
-    const sleeperCond = (
-      platform === 'sleeper' && leagueId
-    );
-    if (window.location.search && platform
-      && (espnCond || sleeperCond)) {
+    const espnCond =
+      platform === "espn" &&
+      sport &&
+      leagueId &&
+      year &&
+      (!isPrivateLeague || espnS2);
+    const sleeperCond = platform === "sleeper" && leagueId;
+    if (window.location.search && platform && (espnCond || sleeperCond)) {
       fetchLeague(state);
     }
   }, [platform, sport, leagueId, year, espnS2, isPrivateLeague]);
@@ -208,7 +208,9 @@ const LeagueAnalysis = () => {
   useEffect(() => {
     if (fetchesInProgress > 0) {
       // Note: I don't understand why I can't just pass fetchSeconds + 1 to setFetchSeconds()
-      setCounterId(setInterval(() => setFetchSeconds((seconds) => seconds + 1), 1000));
+      setCounterId(
+        setInterval(() => setFetchSeconds((seconds) => seconds + 1), 1000)
+      );
     } else {
       clearInterval(counterId);
       setFetchSeconds(0);
@@ -216,7 +218,7 @@ const LeagueAnalysis = () => {
   }, [fetchesInProgress]);
 
   useEffect(() => {
-    if (fetchedLeague && view !== 'league') {
+    if (fetchedLeague && view !== "league") {
       utils.colorMatchupsTable();
     }
   }, [fetchedLeague, view]);
@@ -237,12 +239,12 @@ const LeagueAnalysis = () => {
       validYears.push(i);
     }
 
-    let form = '';
+    let form = "";
     switch (platform) {
-      case 'espn':
+      case "espn":
         form = forms.espnForm(validYears, state);
         break;
-      case 'sleeper':
+      case "sleeper":
         form = forms.sleeperForm(state);
         break;
       default:
@@ -258,18 +260,13 @@ const LeagueAnalysis = () => {
             Fetching league...
             <br />
             <br />
-            Request has been active for
-            {' '}
-            {fetchSeconds}
-            {' '}
-            seconds.
+            Request has been active for {fetchSeconds} seconds.
             <br />
             <br />
-            If nothing happens after about a minute, there may be an issue.
-            {' '}
-            You can try refreshing, but if it fails multiple times, there may be something
-            {' '}
-            wrong with the platform&apos;s API or my code (hopefully not).
+            If nothing happens after about a minute, there may be an issue. You
+            can try refreshing, but if it fails multiple times, there may be
+            something wrong with the platform&apos;s API or my code (hopefully
+            not).
           </div>
         </div>
       );
@@ -304,90 +301,82 @@ const LeagueAnalysis = () => {
     // Return league page
     const sideNav = (
       <Nav className="flex-column side-nav">
-        <Nav.Item
-          onClick={() => setViewAndUpdateUrl('league', setView, state)}
-        >
+        <Nav.Item onClick={() => setViewAndUpdateUrl("league", setView, state)}>
           League
         </Nav.Item>
-        {
-          teams.map((team) => (
-            <Nav.Item
-              onClick={() => setViewAndUpdateUrl(team.name, setView, state)}
-              key={team.name}
-            >
-              {team.name}
-            </Nav.Item>
-          ))
-        }
+        {teams.map((team) => (
+          <Nav.Item
+            onClick={() => setViewAndUpdateUrl(team.name, setView, state)}
+            key={team.name}
+          >
+            {team.name}
+          </Nav.Item>
+        ))}
       </Nav>
     );
 
     const resetLeagueButton = (
-      <Button
-        variant="dark"
-        onClick={resetLeague}
-        className="reset-league-btn"
-      >
+      <Button variant="dark" onClick={resetLeague} className="reset-league-btn">
         Re-enter League Info
       </Button>
     );
 
     const leagueStandingsColumns = [
-      'Expected Ranking',
-      'Name',
-      'Expected Wins',
-      'Expected Losses',
-      'Actual Wins',
-      'Win Differential',
-      'Projected Wins',
-      'Projected Losses',
-      'Average Score',
+      "Expected Ranking",
+      "Name",
+      "Expected Wins",
+      "Expected Losses",
+      "Actual Wins",
+      "Win Differential",
+      "Projected Wins",
+      "Projected Losses",
+      "Average Score",
     ];
     const teamMatchupsColumns = [
-      'Week',
-      'Points For',
-      'Opponent',
-      'Opponent Average Score',
-      'Opponent Adj. Std. Dev.',
-      'Expected Win %',
-      'Actual Win?',
+      "Week",
+      "Points For",
+      "Opponent",
+      "Opponent Average Score",
+      "Opponent Adj. Std. Dev.",
+      "Expected Win %",
+      "Actual Win?",
     ];
     const barGraphOptions = {
       scales: {
-        yAxes: [{
-          ticks: {
-            callback(value) {
-              return `${value}%`;
+        yAxes: [
+          {
+            ticks: {
+              callback(value) {
+                return `${value}%`;
+              },
+              beginAtZero: true,
             },
-            beginAtZero: true,
+            scaleLabel: {
+              display: true,
+              labelString: "Percent Chance",
+              fontSize: 18,
+            },
           },
-          scaleLabel: {
-            display: true,
-            labelString: 'Percent Chance',
-            fontSize: 18,
+        ],
+        xAxes: [
+          {
+            ticks: {
+              beginAtZero: true,
+            },
+            scaleLabel: {
+              display: true,
+              labelString: "Number of wins",
+              fontSize: 18,
+            },
           },
-        }],
-        xAxes: [{
-          ticks: {
-            beginAtZero: true,
-          },
-          scaleLabel: {
-            display: true,
-            labelString: 'Number of wins',
-            fontSize: 18,
-          },
-        }],
+        ],
       },
     };
-    const statsPage = view === 'league'
-      ? (
+    const statsPage =
+      view === "league" ? (
         <div className="league-analysis-page">
           <div className="page-title">
-            <h2>
-              {league.name}
-              {' '}
-              Expected Standings
-            </h2>
+            <h2>{league.name} Expected Standings</h2>
             {resetLeagueButton}
           </div>
           <Table
@@ -396,8 +385,7 @@ const LeagueAnalysis = () => {
             columns={leagueStandingsColumns}
           />
         </div>
-      )
-      : (
+      ) : (
         <div className="league-analysis-page">
           <div className="page-title">
             <h2>{view}</h2>

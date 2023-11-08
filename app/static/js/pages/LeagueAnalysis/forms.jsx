@@ -1,18 +1,21 @@
-import React from 'react';
-import Form from 'react-bootstrap/Form';
+import React from "react";
+import Form from "react-bootstrap/Form";
 
-const espnForm = (validYears, {
-  isPrivateLeague,
-  setIsPrivateLeague,
-  sport,
-  setSport,
-  leagueId,
-  setLeagueId,
-  year,
-  setYear,
-  espnS2,
-  setEspnS2,
-}) => (
+const espnForm = (
+  validYears,
+  {
+    isPrivateLeague,
+    setIsPrivateLeague,
+    sport,
+    setSport,
+    leagueId,
+    setLeagueId,
+    year,
+    setYear,
+    espnS2,
+    setEspnS2,
+  }
+) => (
   <div>
     <Form.Group controlId="espnSport">
       <Form.Label>Sport</Form.Label>
@@ -32,12 +35,9 @@ const espnForm = (validYears, {
       <Form.Label>League ID</Form.Label>
       <div className="help-tip">
         <p>
-          League ID is how ESPN uniquely identifies fantasy leagues.
-          Click
-          {' '}
-          <a href="/faqs#espn-league-id">here</a>
-          {' '}
-          for more information on how to find it.
+          League ID is how ESPN uniquely identifies fantasy leagues. Click{" "}
+          <a href="/faqs#espn-league-id">here</a> for more information on how to
+          find it.
         </p>
       </div>
       <Form.Control
@@ -60,11 +60,11 @@ const espnForm = (validYears, {
         onChange={(event) => setYear(event.target.value)}
         required
       >
-        {
-          validYears.map((validYear) => (
-            <option value={validYear} key={validYear}>{validYear}</option>
-          ))
-        }
+        {validYears.map((validYear) => (
+          <option value={validYear} key={validYear}>
+            {validYear}
+          </option>
+        ))}
       </Form.Control>
     </Form.Group>
     <Form.Group controlId="espnIsPrivateLeague">
@@ -75,35 +75,33 @@ const espnForm = (validYears, {
         label="This is a private league"
       />
     </Form.Group>
-    {!isPrivateLeague ? ''
-      : (
-        <div>
-          <Form.Group controlId="espnS2">
-            <Form.Label>espn_s2</Form.Label>
-            <div className="help-tip">
-              <p>
-                espn_s2 is a cookie that ESPN uses for authentication.
-                I need to use it to access private leagues.
-                Click
-                {' '}
-                <a href="/faqs#espn-s2">here</a>
-                {' '}
-                for more information on how to find it.
-              </p>
-            </div>
-            <Form.Control
-              name="espnS2"
-              value={espnS2}
-              onChange={(event) => setEspnS2(event.target.value)}
-              placeholder="ADgDGFGDfgDFGDfgRTEFwecsYJUyrCWdcdsgRTHTbVEdSCdserVed..."
-              required
-            />
-            <Form.Control.Feedback type="invalid">
-              Please provide the espn_s2 cookie for private leagues.
-            </Form.Control.Feedback>
-          </Form.Group>
-        </div>
-      )}
+    {!isPrivateLeague ? (
+      ""
+    ) : (
+      <div>
+        <Form.Group controlId="espnS2">
+          <Form.Label>espn_s2</Form.Label>
+          <div className="help-tip">
+            <p>
+              espn_s2 is a cookie that ESPN uses for authentication. I need to
+              use it to access private leagues. Click{" "}
+              <a href="/faqs#espn-s2">here</a> for more information on how to
+              find it.
+            </p>
+          </div>
+          <Form.Control
+            name="espnS2"
+            value={espnS2}
+            onChange={(event) => setEspnS2(event.target.value)}
+            placeholder="ADgDGFGDfgDFGDfgRTEFwecsYJUyrCWdcdsgRTHTbVEdSCdserVed..."
+            required
+          />
+          <Form.Control.Feedback type="invalid">
+            Please provide the espn_s2 cookie for private leagues.
+          </Form.Control.Feedback>
+        </Form.Group>
+      </div>
+    )}
   </div>
 );
 
@@ -113,12 +111,9 @@ const sleeperForm = ({ leagueId, setLeagueId }) => (
       <Form.Label>League ID</Form.Label>
       <div className="help-tip">
         <p>
-          League ID is how Sleeper uniquely identifies fantasy leagues.
-          Click
-          {' '}
-          <a href="/faqs#sleeper-league-id">here</a>
-          {' '}
-          for more information on how to find it.
+          League ID is how Sleeper uniquely identifies fantasy leagues. Click{" "}
+          <a href="/faqs#sleeper-league-id">here</a> for more information on how
+          to find it.
         </p>
       </div>
       <Form.Control

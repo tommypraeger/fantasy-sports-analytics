@@ -1,16 +1,12 @@
-import React from 'react';
-import Navbar from 'react-bootstrap/Navbar';
-import Nav from 'react-bootstrap/Nav';
-import { NavLink } from 'react-router-dom';
+import React from "react";
+import Navbar from "react-bootstrap/Navbar";
+import Nav from "react-bootstrap/Nav";
+import { NavLink } from "react-router-dom";
 
 const NavBar = () => (
   <Navbar bg="dark" variant="dark">
     <Navbar.Brand>
-      <NavLink
-        to="/"
-        className="nav-link"
-        activeClassName="nav-link-selected"
-      >
+      <NavLink to="/" className="nav-link" activeClassName="nav-link-selected">
         Fantasy Sports Analytics
       </NavLink>
     </Navbar.Brand>
