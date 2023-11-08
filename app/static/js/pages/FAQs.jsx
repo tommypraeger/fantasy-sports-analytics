@@ -125,31 +125,44 @@ const FAQs = () => {
           </Accordion.Toggle>
           <Accordion.Collapse eventKey="espn-s2">
             <Card.Body>
-              Here are instructions for Chrome. First, navigate to the ESPN
-              website. Then, click the lock to the left of the URL. <br />
-              <br />
-              <img src={viewCookies} alt="Click lock example" />
-              <br />
-              <br />
-              Then, click &quot;Cookies&quot;.
+              espn_s2 is a cookie that ESPN uses for auth. It's needed to be
+              able to access date for private leagues. It's clunky, but I
+              haven't implemented anything better :/
               <br />
               <br />
-              <img src={viewCookies2} alt="Open cookies example" width="320" />
-              <br />
-              <br />
-              Then, scroll down to espn.com and find the espn_s2 cookie. Copy
-              and paste the whole thing from the &quot;Content&quot; field.
-              <br />
-              <br />
-              <img src={espnS2} alt="espn_s2 example" width="441" />
-              <br />
-              <br />
-              It is really long (much longer than you can see in the screenshot)
-              so make sure you get all of it.
-              <br />
-              This is just a cookie ESPN uses for authentication and I
-              can&apos;t access private leagues without. I promise I won&apos;t
-              try to do anything malicious with it :)
+              To find the espn_s2 cookie, follow instructions for your browser:
+              <ul>
+                <li>
+                  Chrome:&nbsp;
+                  <a
+                    target="_blank"
+                    href="https://developer.chrome.com/docs/devtools/application/cookies/"
+                  >
+                    https://developer.chrome.com/docs/devtools/application/cookies/
+                  </a>
+                </li>
+                <li>
+                  Firefox:&nbsp;
+                  <a
+                    target="_blank"
+                    href="https://firefox-source-docs.mozilla.org/devtools-user/storage_inspector/index.html"
+                  >
+                    https://firefox-source-docs.mozilla.org/devtools-user/storage_inspector/index.html
+                  </a>
+                </li>
+                <li>
+                  Safari:&nbsp;
+                  <a
+                    target="_blank"
+                    href="https://apple.stackexchange.com/a/411300"
+                  >
+                    https://apple.stackexchange.com/a/411300
+                  </a>
+                </li>
+              </ul>
+              Once you find the cookie, you will need to use the entire espn_s2
+              value, which looks something like AECLVyzEvCHXu...(and many more
+              characters).
             </Card.Body>
           </Accordion.Collapse>
         </Card>
