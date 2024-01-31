@@ -11,15 +11,18 @@ import Table from "../../components/Table";
 import BarGraph from "../../components/Graph";
 import NavBar from "../../components/NavBar";
 
-import getLambda from "../../api/v1";
-
 import forms from "./forms";
 import utils from "./utils";
 
+const lambdaUrl =
+  "https://5eyhhffybldzupc3yl3p5zoeca0kmrck.lambda-url.us-east-2.on.aws";
+
 // Send initial request to Lambda
 const wakeupLambda = () => {
-  const { lambda, params } = getLambda("wakeup-league-analysis", {});
-  lambda.invoke(params, () => {});
+  fetch(lambdaUrl, {
+    method: "POST",
+    body: JSON.stringify({ method: "wakeup-league-analysis" }),
+  });
 };
 
 // Request league stats from API
@@ -34,19 +37,22 @@ const fetchLeague = ({
   setResponse,
 }) => {
   setFetchesInProgress(fetchesInProgress + 1);
-  const { lambda, params } = getLambda("league-analysis", {
-    platform,
-    sport,
-    leagueId,
-    year,
-    espnS2,
-  });
-  lambda.invoke(params, (err, data) => {
-    if (err) {
-      setResponse(JSON.parse(err.Payload));
-    }
-    setResponse(JSON.parse(data.Payload));
-  });
+  fetch(lambdaUrl, {
+    method: "POST",
+    body: JSON.stringify({
+      method: "league-analysis",
+      platform,
+      sport,
+      leagueId,
+      year,
+      espnS2,
+    }),
+    headers: {
+      "Content-type": "application/json; charset=UTF-8",
+    },
+  })
+    .then((response) => response.json())
+    .then((data) => setResponse(data));
 };
 
 const setLeagueAfterFetch = ({
