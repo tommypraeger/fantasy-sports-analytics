@@ -123,7 +123,7 @@ const LeagueAnalysis = () => {
   const [league, setLeague] = useState({});
   const [teams, setTeams] = useState([]);
   const [view, setView] = useState("league");
-  const [platform, setPlatform] = useState("espn");
+  const [platform, setPlatform] = useState("sleeper");
   const [sport, setSport] = useState("football");
   const [leagueId, setLeagueId] = useState("");
   const [currentYear, setCurrentYear] = useState("");
@@ -293,8 +293,8 @@ const LeagueAnalysis = () => {
                 as="select"
                 onChange={(event) => setPlatform(event.target.value)}
               >
-                <option value="espn">ESPN</option>
                 <option value="sleeper">Sleeper</option>
+                <option value="espn">ESPN</option>
               </Form.Control>
             </Form.Group>
             {form}
