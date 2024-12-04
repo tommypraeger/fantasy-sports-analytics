@@ -1,9 +1,9 @@
-@import "constants";
+@use "constants";
 
 .league-analysis-page {
-    width: calc(100% - #{$side-nav-width} - #{$page-margin} - #{$page-margin});
+    width: calc(100% - #{constants.$side-nav-width} - #{constants.$page-margin} - #{constants.$page-margin});
     display: inline-block;
-    margin: $page-margin;
+    margin: constants.$page-margin;
     margin-bottom: 0;
 }
 

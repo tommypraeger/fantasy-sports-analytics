@@ -1,15 +1,15 @@
-@import "loading";
-@import "LeagueAnalysis";
-@import "NavBar";
-@import "FAQs";
-@import "tooltip";
+@use "loading";
+@use "LeagueAnalysis";
+@use "NavBar";
+@use "FAQs";
+@use "tooltip";
 
-@import "constants";
+@use "constants";
 
 body {
     font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
     color: white;
-    background-color: $darkest;
+    background-color: constants.$darkest;
 }
 
 .form {
@@ -19,19 +19,19 @@ body {
     border-radius: 40px;
     padding: 60px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.8);
-    background-color: $darker;
+    background-color: constants.$darker;
 }
 
 .side-nav {
     float: left;
-    width: $side-nav-width;
+    width: constants.$side-nav-width;
     border: 1px solid white;
     border-left: 0;
-    margin-top: $page-margin;
+    margin-top: constants.$page-margin;
 
     div {
         border-bottom: 1px solid white;
-        background-color: $darker;
+        background-color: constants.$darker;
         padding: 10px;
 
         &:last-child {
@@ -39,7 +39,7 @@ body {
         }
 
         &:hover {
-            background-color: $dark;
+            background-color: constants.$dark;
             cursor: pointer;
         }
     }

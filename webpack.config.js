@@ -51,7 +51,9 @@ module.exports = {
     ],
   },
   devServer: {
-    contentBase: path.join(__dirname, 'app', 'dist'),
+    static: {
+      directory: path.join(__dirname, 'app', 'dist'),
+    },
     compress: true,
     port: 8000,
     // proxy: {
