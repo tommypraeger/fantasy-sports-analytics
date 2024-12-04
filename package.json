@@ -37,7 +37,7 @@
     "webpack-dev-server": "^5.1.0"
   },
   "dependencies": {
-    "aws-sdk": "^2.761.0",
+    "aws-sdk": "^2.1692.0",
     "babel-eslint": "^10.1.0",
     "bootstrap": "^5.0.1",
     "chart.js": "^2.9.3",
