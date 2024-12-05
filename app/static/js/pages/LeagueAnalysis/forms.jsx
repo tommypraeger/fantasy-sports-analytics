@@ -1,5 +1,5 @@
-import React from "react";
-import Form from "react-bootstrap/Form";
+import React from 'react';
+import Form from 'react-bootstrap/Form';
 
 const espnForm = (
   validYears,
@@ -14,7 +14,7 @@ const espnForm = (
     setYear,
     espnS2,
     setEspnS2,
-  }
+  },
 ) => (
   <div>
     <Form.Group controlId="espnSport">
@@ -35,8 +35,11 @@ const espnForm = (
       <Form.Label>League ID</Form.Label>
       <div className="help-tip">
         <p>
-          League ID is how ESPN uniquely identifies fantasy leagues. Click{" "}
-          <a href="/faqs#espn-league-id">here</a> for more information on how to
+          League ID is how ESPN uniquely identifies fantasy leagues. Click
+          {' '}
+          <a href="/faqs#espn-league-id">here</a>
+          {' '}
+          for more information on how to
           find it.
         </p>
       </div>
@@ -76,7 +79,7 @@ const espnForm = (
       />
     </Form.Group>
     {!isPrivateLeague ? (
-      ""
+      ''
     ) : (
       <div>
         <Form.Group controlId="espnS2">
@@ -84,8 +87,11 @@ const espnForm = (
           <div className="help-tip">
             <p>
               espn_s2 is a cookie that ESPN uses for authentication. I need to
-              use it to access private leagues. Click{" "}
-              <a href="/faqs#espn-s2">here</a> for more information on how to
+              use it to access private leagues. Click
+              {' '}
+              <a href="/faqs#espn-s2">here</a>
+              {' '}
+              for more information on how to
               find it.
             </p>
           </div>
@@ -111,8 +117,11 @@ const sleeperForm = ({ leagueId, setLeagueId }) => (
       <Form.Label>League ID</Form.Label>
       <div className="help-tip">
         <p>
-          League ID is how Sleeper uniquely identifies fantasy leagues. Click{" "}
-          <a href="/faqs#sleeper-league-id">here</a> for more information on how
+          League ID is how Sleeper uniquely identifies fantasy leagues. Click
+          {' '}
+          <a href="/faqs#sleeper-league-id">here</a>
+          {' '}
+          for more information on how
           to find it.
         </p>
       </div>

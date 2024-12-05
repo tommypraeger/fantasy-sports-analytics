@@ -1,9 +1,11 @@
 /* eslint-disable react/no-array-index-key */
-import React from "react";
-import ReactTable from "react-bootstrap/Table";
-import PropTypes from "prop-types";
+import React from 'react';
+import ReactTable from 'react-bootstrap/Table';
+import PropTypes from 'prop-types';
 
-const Table = ({ data, columns, id, className }) => (
+const Table = ({
+  data, columns, id, className,
+}) => (
   <ReactTable
     id={id}
     className={className}
@@ -37,8 +39,8 @@ Table.propTypes = {
   className: PropTypes.string,
 };
 Table.defaultProps = {
-  id: "",
-  className: "",
+  id: '',
+  className: '',
 };
 
 export default Table;

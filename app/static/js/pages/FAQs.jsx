@@ -1,20 +1,20 @@
-import React from "react";
-import Accordion from "react-bootstrap/Accordion";
-import Card from "react-bootstrap/Card";
-import NavBar from "../components/NavBar";
+import React from 'react';
+import Accordion from 'react-bootstrap/Accordion';
+import Card from 'react-bootstrap/Card';
+import NavBar from '../components/NavBar';
 
-import espnLeagueId from "../../images/espn_league_id.png";
-import sleeperLeagueId from "../../images/sleeper_league_id.png";
-import viewCookies from "../../images/view_cookies.png";
-import viewCookies2 from "../../images/view_cookies2.png";
-import espnS2 from "../../images/espn_s2.png";
-import leagueExample from "../../images/league_example.png";
-import winDistExample from "../../images/win_dist_graph_example.png";
-import matchupDataExample from "../../images/matchup_data_example.png";
+import espnLeagueId from '../../images/espn_league_id.png';
+import sleeperLeagueId from '../../images/sleeper_league_id.png';
+import viewCookies from '../../images/view_cookies.png';
+import viewCookies2 from '../../images/view_cookies2.png';
+import espnS2 from '../../images/espn_s2.png';
+import leagueExample from '../../images/league_example.png';
+import winDistExample from '../../images/win_dist_graph_example.png';
+import matchupDataExample from '../../images/matchup_data_example.png';
 
 const FAQs = () => {
-  const defaultActive = "how-calculate";
-  const active = window.location.hash.split("#")[1] || defaultActive;
+  const defaultActive = 'how-calculate';
+  const active = window.location.hash.split('#')[1] || defaultActive;
   return (
     <div>
       <NavBar />
@@ -45,7 +45,8 @@ const FAQs = () => {
               actual score, so I also create a random variable out of your
               score. I then treat the two random variables (representing your
               score and your opponent&apos;s score) as independent and create a
-              new random variable equal to yours minus their, according to the{" "}
+              new random variable equal to yours minus their, according to the
+              {' '}
               <a
                 href="https://www.khanacademy.org/math/ap-statistics/random-variables-ap/
                        combining-random-variables/a/combining-random-variables-article"
@@ -72,12 +73,21 @@ const FAQs = () => {
               <b>Expected win distribution</b>
               <br />
               To find expected win distribution, I treat all past expected win
-              probabilities as a{" "}
+              probabilities as a
+              {' '}
               <a href="https://en.wikipedia.org/wiki/Poisson_binomial_distribution">
                 Poission binomial distribution
               </a>
-              . I then loop over each of <i>n</i> possible amount of wins and
-              figure out the probability that there are exactly <i>n</i> wins,
+              . I then loop over each of
+              {' '}
+              <i>n</i>
+              {' '}
+              possible amount of wins and
+              figure out the probability that there are exactly
+              {' '}
+              <i>n</i>
+              {' '}
+              wins,
               given your expected win probabilities.
               <br />
               <br />
@@ -194,7 +204,8 @@ const FAQs = () => {
               time to work on this. Hopefully, I can also add more pages besides
               just league analysis.
               <br />
-              <br />I only have leagues on ESPN and Sleeper, so those were the
+              <br />
+              I only have leagues on ESPN and Sleeper, so those were the
               easiest for me to figure out and test with.
             </Card.Body>
           </Accordion.Collapse>
@@ -205,7 +216,8 @@ const FAQs = () => {
           </Accordion.Toggle>
           <Accordion.Collapse eventKey="reenter-form">
             <Card.Body>
-              You can bookmark the URL after the league analysis page loads{" "}
+              You can bookmark the URL after the league analysis page loads
+              {' '}
               (i.e. when all the URL parameters are visible), but I do not
               actually store any data. If this site gains traction, I&apos;ll
               consider allowing users to create accounts and save leagues.
@@ -222,7 +234,8 @@ const FAQs = () => {
           </Accordion.Toggle>
           <Accordion.Collapse eventKey="league-analysis-examples">
             <Card.Body>
-              Of course! Here are some screenshots pulled from one of my leagues{" "}
+              Of course! Here are some screenshots pulled from one of my leagues
+              {' '}
               (with team names covered for privacy).
               <br />
               <br />
