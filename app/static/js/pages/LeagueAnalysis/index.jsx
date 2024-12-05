@@ -26,6 +26,7 @@ const wakeupLambda = () => {
 };
 
 // Request league stats from API
+const endpoint = process.env.API_ENDPOINT ? process.env.API_ENDPOINT : lambdaUrl;
 const fetchLeague = ({
   platform,
   sport,
@@ -37,7 +38,7 @@ const fetchLeague = ({
   setResponse,
 }) => {
   setFetchesInProgress(fetchesInProgress + 1);
-  fetch(lambdaUrl, {
+  fetch(endpoint, {
     method: "POST",
     body: JSON.stringify({
       method: "league-analysis",

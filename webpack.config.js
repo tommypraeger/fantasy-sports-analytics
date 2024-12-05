@@ -1,5 +1,17 @@
 const path = require('path');
+const webpack = require('webpack');
+const dotenv = require('dotenv');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+
+// Load environment variables
+// Explicitly load .env
+const env = dotenv.config({ path: './.env' }).parsed;
+
+if (!env) {
+  console.error('Failed to load .env file.');
+} else {
+  console.log('Loaded environment variables:', env);
+}
 
 module.exports = {
   entry: './app/static/js/index.jsx',
@@ -13,6 +25,9 @@ module.exports = {
       title: 'Fantasy Sports Analytics',
       template: './app/index.html',
       favicon: './app/favicon.ico',
+    }),
+    new webpack.DefinePlugin({
+      'process.env': JSON.stringify(env),
     }),
   ],
   watch: false,
