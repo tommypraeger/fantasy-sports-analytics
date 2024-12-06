@@ -1,8 +1,5 @@
 import json
 
-from flask import Flask, jsonify, request
-from flask_cors import CORS
-
 from app.analysis.fantasy_league_analysis.league import League
 from app.analysis.fantasy_league_analysis.export import export_league, export_team
 
@@ -33,16 +30,3 @@ def handle_league_analysis(event_body):
         return {"errorMessage": str(e)}
 
     return league_export
-
-# for local testing
-app = Flask(__name__)
-CORS(app)
-
-@app.route('/', methods=['GET', 'POST'])
-def post_data():
-    data = request.json
-    response = handle_league_analysis(data)
-    return jsonify(response)
-
-if __name__ == '__main__':
-    app.run(debug=True, port=3000)
