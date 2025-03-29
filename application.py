@@ -1,10 +1,12 @@
 import json
+import traceback
+from typing import Dict, Any
 
 from app.analysis.fantasy_league_analysis.league import League
 from app.analysis.fantasy_league_analysis.export import export_league, export_team
 
 
-def handler(event, context):
+def handler(event: Dict[str, Any], context: Any) -> str:
     event_body = json.loads(event["body"])
     if event_body["method"] == "league-analysis":
         return json.dumps(handle_league_analysis(event_body))
@@ -14,7 +16,7 @@ def handler(event, context):
         return json.dumps({})
 
 
-def handle_league_analysis(event_body):
+def handle_league_analysis(event_body: Dict[str, Any]) -> Dict[str, Any]:
     print("Received request for league analysis")
     try:
         # Argument reqs
@@ -23,10 +25,10 @@ def handle_league_analysis(event_body):
         league = League(event_body)
         league_export = {
             "league": export_league(league),
-            "teams": [export_team(team) for team in league.teams],
+            "teams": [export_team(team, league) for team in league.teams],
         }
     except Exception as e:
-        print(str(e))
+        print(traceback.format_exc())
         return {"errorMessage": str(e)}
 
     return league_export

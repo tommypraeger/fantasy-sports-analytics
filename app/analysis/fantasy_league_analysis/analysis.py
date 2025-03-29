@@ -5,6 +5,7 @@ import numpy as np
 from scipy.stats import norm
 
 from app.analysis.fantasy_league_analysis.poibin import PoiBin
+from app.analysis.fantasy_league_analysis.models import Matchup
 
 
 def get_win_likelihoods(league, team) -> None:
@@ -12,7 +13,7 @@ def get_win_likelihoods(league, team) -> None:
 
     for matchup in team.matchups:
         # Separate win likelihood calculations into past and future
-        if matchup["week"] <= league.curr_matchups_played:
+        if matchup.week <= league.curr_matchups_played:
             win_likelihood = past_win_likelihood(matchup, league, team)
         else:
             win_likelihood = future_win_likelihood(
@@ -20,15 +21,15 @@ def get_win_likelihoods(league, team) -> None:
             )
 
         team.win_likelihoods.append(win_likelihood)
-        matchup["win_likelihood"] = win_likelihood
+        matchup.win_likelihood = win_likelihood
 
 
-def past_win_likelihood(matchup: dict, league, team) -> float:
+def past_win_likelihood(matchup: Matchup, league, team) -> float:
     """Win likelihood of a past matchup"""
+    score = matchup.home_score if matchup.home_team_id == team.id else matchup.away_score
+    opponent_id = matchup.away_team_id if matchup.home_team_id == team.id else matchup.home_team_id
 
-    score = matchup["score"]
-
-    opponent = league.get_team(matchup["opponent"])
+    opponent = league.team_map[opponent_id]
     opponent_average_score = opponent.average_score
     team.opponent_average_scores.append(opponent_average_score)
 
@@ -39,11 +40,11 @@ def past_win_likelihood(matchup: dict, league, team) -> float:
 
 
 def future_win_likelihood(
-    matchup: dict, league, average_score: float, std_dev: float, team
+    matchup: Matchup, league, average_score: float, std_dev: float, team
 ) -> float:
     """Win likelihood of a future matchup"""
-
-    opponent = league.get_team(matchup["opponent"])
+    opponent_id = matchup.away_team_id if matchup.home_team_id == team.id else matchup.home_team_id
+    opponent = league.team_map[opponent_id]
     opponent_average_score = opponent.average_score
     team.opponent_average_scores.append(opponent_average_score)
 

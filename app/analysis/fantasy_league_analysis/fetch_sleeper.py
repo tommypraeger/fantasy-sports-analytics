@@ -1,18 +1,24 @@
 import requests
 
-from app.analysis.fantasy_league_analysis.analysis import (
-    std_dev,
-    get_win_likelihoods,
-    get_win_total_probs,
-    get_future_win_total_probs,
+from app.analysis.fantasy_league_analysis.models import (
+    League as LeagueModel,
+    LeagueInfo,
+    Team,
+    Matchup,
+    Platform,
 )
-from app.analysis.fantasy_league_analysis.team import Team
+from app.analysis.fantasy_league_analysis.common import (
+    perform_team_analysis,
+    get_curr_matchups_played,
+)
 
 
-def fetch_league(league, league_info) -> None:
+def fetch_league(league: LeagueModel, league_info: LeagueInfo) -> None:
     """Load league and set metadata for league and teams"""
-
-    league.id = league_info["leagueId"]
+    league.id = league_info.league_id
+    league.year = league_info.year
+    league.sport = league_info.sport
+    league.platform = Platform.SLEEPER
 
     # Necessary Sleeper API URLs
     league_url = f"https://api.sleeper.app/v1/league/{league.id}"
@@ -20,193 +26,87 @@ def fetch_league(league, league_info) -> None:
     users_url = f"https://api.sleeper.app/v1/league/{league.id}/users"
 
     with requests.Session() as session:
-        exception_message = (
-            "Something went wrong fetching your league. "
-            "Make sure your league ID is correct."
-        )
-
-        # Make requests and check if it succeeds
+        # Fetch league data
         league_resp = session.get(league_url)
         if league_resp.status_code >= 400:
-            raise Exception(exception_message)
+            raise Exception("Failed to fetch league data. Check your league ID.")
+        league_json = league_resp.json()
+
+        # Fetch teams data
         teams_resp = session.get(teams_url)
         if teams_resp.status_code >= 400:
-            raise Exception(exception_message)
+            raise Exception("Failed to fetch teams data. Check your league ID.")
+        teams_json = teams_resp.json()
+
+        # Fetch users data
         users_resp = session.get(users_url)
         if users_resp.status_code >= 400:
-            raise Exception(exception_message)
+            raise Exception("Failed to fetch users data. Check your league ID.")
+        users_json = users_resp.json()
 
-        league_json = league_resp.json()
-        teams = teams_resp.json()
-        users = users_resp.json()
-
+        # Set league metadata
         league.name = league_json["name"]
         league.total_matchups = league_json["settings"]["playoff_week_start"] - 1
-        get_league_schedule(league, session)
-        league.curr_matchups_played = get_curr_matchups_played(teams[0])
+        league.num_teams = len(teams_json)
+
+        # Create teams from rosters and users data
+        user_map = {user["user_id"]: user["display_name"] for user in users_json}
+        for roster in teams_json:
+            roster_id = str(roster["roster_id"])
+            team = Team(
+                id=roster_id,
+                name=user_map.get(roster["owner_id"], f"Team {roster['roster_id']}")
+            )
+            league.teams.append(team)
+            league.team_map[roster_id] = team
+
+        # Create standardized matchups directly from the schedule
+        create_standardized_matchups(league, session)
+
+        # Get current matchups played using the common function
+        league.curr_matchups_played = get_curr_matchups_played(league)
 
     # Can't do analysis with less than 2 games played
     if league.curr_matchups_played < 2:
         raise Exception("There must have been at least 2 matchups played already.")
 
-    league.num_teams = league_json["settings"]["num_teams"]
-
-    for team_info in teams:
-        team_obj = Team()
-        get_team_metadata(team_obj, team_info, users, league)
-        league.teams.append(team_obj)
-        league.team_map[team_obj.id] = team_obj
-
-    # Need other team data to be complete before this can be done
-    for team in league.teams:
-        get_opponents(team, league)
+    # Perform team analysis
+    perform_team_analysis(league)
 
 
-def get_league_schedule(league, session) -> None:
-    """Get schedule for league"""
-
-    matchups_url = "https://api.sleeper.app/v1/league/{}/matchups/{}"
-
+def create_standardized_matchups(league: LeagueModel, session: requests.Session) -> None:
+    """Fetch and convert Sleeper schedule format to standardized matchup format"""
     for week in range(1, league.total_matchups + 1):
-        matchups = session.get(matchups_url.format(league.id, week))
-        league.schedule.append(matchups.json())
+        matchups_url = f"https://api.sleeper.app/v1/league/{league.id}/matchups/{week}"
+        matchups_resp = session.get(matchups_url)
+        if matchups_resp.status_code >= 400:
+            raise Exception("Failed to fetch matchups data. Check your league ID.")
+        matchups = matchups_resp.json()
 
+        # Group matchups by matchup_id to find pairs of teams
+        matchup_groups = {}
+        for matchup in matchups:
+            matchup_id = str(matchup["matchup_id"])
+            if matchup_id not in matchup_groups:
+                matchup_groups[matchup_id] = []
+            matchup_groups[matchup_id].append(matchup)
 
-def perform_team_analysis(league) -> None:
-    """Perform all the statistics and analysis for each team"""
+        # Create standardized matchups from pairs
+        for matchup_id, matchup_pair in matchup_groups.items():
+            if len(matchup_pair) != 2:
+                continue  # Skip if not a complete matchup pair
 
-    for team in league.teams:
-        analyze_team(league, team)
+            home_team = matchup_pair[0]
+            away_team = matchup_pair[1]
 
-
-def analyze_team(league, team) -> None:
-    """Calculate win expectancies"""
-
-    get_win_likelihoods(league, team)
-    get_win_total_probs(league, team)
-    get_future_win_total_probs(league, team)
-
-
-def get_curr_matchups_played(team: dict) -> int:
-    """Get current number of matchups played"""
-
-    settings = team["settings"]
-    return settings["wins"] + settings["losses"] + settings["ties"]
-
-
-def get_team_metadata(team, team_info: dict, users: list, league) -> None:
-    """Calculate team-specific score data"""
-
-    team.id = team_info["roster_id"]
-    team.name = get_user_name(users, team_info["owner_id"])
-    # adding half-wins for ties messes with win total projections
-    team.wins = team_info["settings"]["wins"]  # + 0.5 * team_info['settings']['ties']
-    get_matchups(team, league)
-    team.average_score = get_average_score(team, league.curr_matchups_played)
-    team.score_std_dev = get_adj_std_dev(team, league.curr_matchups_played)
-
-
-def get_user_name(users: list, user_id: str) -> str:
-    """Get user name for a team"""
-
-    for user in users:
-        if user["user_id"] == user_id:
-            return user["display_name"]
-
-    return "User not found"
-
-
-def get_matchups(team, league) -> None:
-    """Get matchups for a team"""
-
-    for week, matchups in enumerate(league.schedule, 1):
-        for matchup_json in matchups:
-            if matchup_json["roster_id"] == team.id:
-                matchup = {}
-                matchup["week"] = week
-                matchup["score"] = get_score(
-                    team, matchup_json["points"], week, league.curr_matchups_played
-                )
-                matchup["opponent"] = get_opponent(
-                    team, matchup_json["matchup_id"], matchups
-                )
-                matchup["won"] = is_win(
-                    team,
-                    matchup_json["matchup_id"],
-                    matchups,
-                    week,
-                    league.curr_matchups_played,
-                )
-                team.matchups.append(matchup)
-
-
-def get_opponent(team, matchup_id: int, matchups: list) -> int:
-    """Get opponent for a matchup"""
-
-    # Opponent has same matchup_id and different roster_id
-    for matchup in matchups:
-        if matchup["matchup_id"] == matchup_id and matchup["roster_id"] != team.id:
-            return matchup["roster_id"]
-
-
-def get_score(
-    team, score: float, week: int, curr_matchups_played: int
-) -> float or None:
-    """Get score for a matchup"""
-
-    if week > curr_matchups_played:
-        return None
-
-    team.scores.append(score)
-    return score
-
-
-def get_opponents(team, league) -> None:
-    """Get opponents for a team"""
-
-    team.opponents = [league.get_team(matchup["opponent"]) for matchup in team.matchups]
-
-
-def get_average_score(team, curr_matchups_played: int) -> float:
-    """Get average score for a team"""
-
-    total_score = 0
-    for matchup in team.matchups[:curr_matchups_played]:
-        total_score += matchup["score"]
-    return round(total_score / curr_matchups_played, 2)
-
-
-def is_win(
-    team, matchup_id: int, matchups: list, week: int, curr_matchups_played: int
-) -> str:
-    """Returns if a team won a matchup"""
-
-    for matchup in matchups:
-        if week > curr_matchups_played:
-            return "Unknown"
-        if matchup["matchup_id"] == matchup_id:
-            if matchup["roster_id"] == team.id:
-                points_for = matchup["points"]
-            else:
-                points_against = matchup["points"]
-
-    if points_for > points_against:
-        return "Yes"
-    if points_for < points_against:
-        return "No"
-    return "Tie"
-
-
-# I slightly increase standard deviation to reduce the confidence of the predictions
-# Fantasy scores aren't really random variables,
-# so I figured I should make the predictions slightly less confident
-# Adj std dev = std dev * (n+1)/n, where n is the number of games played
-
-
-def get_adj_std_dev(team, curr_matchups_played: int) -> float:
-    """Get adjusted standard deviation of score for a team"""
-
-    adj_std_dev = (
-        std_dev(team.scores) * (curr_matchups_played + 1) / curr_matchups_played
-    )
-    return round(adj_std_dev, 2)
+            matchup = Matchup(
+                matchup_id=matchup_id,
+                week=week,
+                home_team_id=str(home_team["roster_id"]),
+                away_team_id=str(away_team["roster_id"]),
+                home_score=home_team.get("points") or home_team.get("custom_points"),
+                away_score=away_team.get("points") or away_team.get("custom_points"),
+                is_playoffs=False
+            )
+            matchup.platform = Platform.SLEEPER
+            league.matchups.append(matchup)
