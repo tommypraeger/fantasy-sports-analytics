@@ -30,7 +30,7 @@ Start the app:
 ```
 python3 devserver.py
 ```
-The app will run on port 3000 by defaul.
+The app will run on port 3000 by default.
 
 ## Future Work
 - Mobile-friendly

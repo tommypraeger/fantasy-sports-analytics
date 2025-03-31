@@ -1,8 +1,6 @@
 import math
-from functools import reduce
 
 import numpy as np
-from scipy.stats import norm
 
 from app.analysis.fantasy_league_analysis.poibin import PoiBin
 from app.analysis.fantasy_league_analysis.models import Matchup
@@ -64,16 +62,14 @@ def std_dev(arr: list) -> float:
     return np.std(arr, ddof=1)
 
 
-# def cdf(x: float, mu: float, sigma: float):
-#     '''Replace for scipy.stats.norm.cdf because I need to keep package size
-#     down for AWS Lambda
-#
-#     Not needed after using AWS
-#
-#     Cumulative cdf function
-#     Returns probability cdf of x given population with mean and std dev
-#     '''
-#     return (1 + math.erf((x - mu) / sigma / math.sqrt(2))) / 2
+def cdf(x: float, mu: float, sigma: float):
+    '''Replace for scipy.stats.norm.cdf because I need to keep package size
+    down for AWS Lambda
+
+    Cumulative cdf function
+    Returns probability cdf of x given population with mean and std dev
+    '''
+    return (1 + math.erf((x - mu) / sigma / math.sqrt(2))) / 2
 
 
 def win_likelihood(first: float, second: float, std_dev: float) -> float:
@@ -83,7 +79,7 @@ def win_likelihood(first: float, second: float, std_dev: float) -> float:
     between the two scores is greater than 0.
     """
 
-    return norm.cdf(first - second, 0, std_dev)
+    return cdf(first - second, 0, std_dev)
 
 
 def get_win_total_probs(league, team) -> None:

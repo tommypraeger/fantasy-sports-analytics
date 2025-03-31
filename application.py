@@ -1,3 +1,6 @@
+import sys
+sys.path.insert(0, 'site-packages')
+
 import json
 import traceback
 from typing import Dict, Any

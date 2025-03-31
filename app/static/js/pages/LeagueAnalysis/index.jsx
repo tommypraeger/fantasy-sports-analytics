@@ -14,19 +14,18 @@ import NavBar from "../../components/NavBar";
 import forms from "./forms";
 import utils from "./utils";
 
-const lambdaUrl =
-  "https://5eyhhffybldzupc3yl3p5zoeca0kmrck.lambda-url.us-east-2.on.aws";
-
 // Send initial request to Lambda
 const wakeupLambda = () => {
-  fetch(lambdaUrl, {
+  fetch(process.env.API_ENDPOINT, {
     method: "POST",
     body: JSON.stringify({ method: "wakeup-league-analysis" }),
+    headers: {
+      "Content-type": "application/json; charset=UTF-8",
+    },
   });
 };
 
 // Request league stats from API
-const endpoint = process.env.API_ENDPOINT ? process.env.API_ENDPOINT : lambdaUrl;
 const fetchLeague = ({
   platform,
   sport,
@@ -38,7 +37,7 @@ const fetchLeague = ({
   setResponse,
 }) => {
   setFetchesInProgress(fetchesInProgress + 1);
-  fetch(endpoint, {
+  fetch(process.env.API_ENDPOINT, {
     method: "POST",
     body: JSON.stringify({
       method: "league-analysis",

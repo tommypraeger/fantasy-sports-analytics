@@ -3,14 +3,15 @@ const webpack = require('webpack');
 const dotenv = require('dotenv');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 
-// Load environment variables
-// Explicitly load .env
-const env = dotenv.config({ path: './.env' }).parsed;
+// Load environment variables based on NODE_ENV
+const currentEnv = process.env.NODE_ENV || 'development';
+const envPath = `./.env.${currentEnv}`;
+const env = dotenv.config({ path: envPath }).parsed;
 
 if (!env) {
-  console.error('Failed to load .env file.');
+  console.error(`Failed to load ${envPath}`);
 } else {
-  console.log('Loaded environment variables:', env);
+  console.log(`Loaded ${envPath}:`, env);
 }
 
 module.exports = {
