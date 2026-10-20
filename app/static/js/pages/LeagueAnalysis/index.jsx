@@ -10,6 +10,7 @@ import LoadingGif from "../../components/LoadingGif";
 import Table from "../../components/Table";
 import BarGraph from "../../components/Graph";
 import NavBar from "../../components/NavBar";
+import HeadToHeadMatrix from "../../components/HeadToHeadMatrix";
 
 import forms from "./forms";
 import utils from "./utils";
@@ -224,7 +225,7 @@ const LeagueAnalysis = () => {
   }, [fetchesInProgress]);
 
   useEffect(() => {
-    if (fetchedLeague && view !== "league") {
+    if (fetchedLeague && view !== "league" && view !== "head-to-head") {
       utils.colorMatchupsTable();
     }
   }, [fetchedLeague, view]);
@@ -310,6 +311,11 @@ const LeagueAnalysis = () => {
         <Nav.Item onClick={() => setViewAndUpdateUrl("league", setView, state)}>
           League
         </Nav.Item>
+        <Nav.Item
+          onClick={() => setViewAndUpdateUrl("head-to-head", setView, state)}
+        >
+          Head-to-Head
+        </Nav.Item>
         {teams.map((team) => (
           <Nav.Item
             onClick={() => setViewAndUpdateUrl(team.name, setView, state)}
@@ -378,8 +384,28 @@ const LeagueAnalysis = () => {
         ],
       },
     };
-    const statsPage =
-      view === "league" ? (
+    let statsPage;
+    if (view === "head-to-head") {
+      statsPage = (
+        <div className="league-analysis-page">
+          <div className="page-title">
+            <h2>{league.name} Head-to-Head</h2>
+            {resetLeagueButton}
+          </div>
+          <p>
+            Each cell shows the row team&apos;s record against the column
+            opponent if they had played each other every week.
+          </p>
+          <div className="head-to-head-wrapper">
+            <HeadToHeadMatrix
+              teams={league.head_to_head.teams}
+              records={league.head_to_head.records}
+            />
+          </div>
+        </div>
+      );
+    } else if (view === "league") {
+      statsPage = (
         <div className="league-analysis-page">
           <div className="page-title">
             <h2>{league.name} Expected Standings</h2>
@@ -391,7 +417,9 @@ const LeagueAnalysis = () => {
             columns={leagueStandingsColumns}
           />
         </div>
-      ) : (
+      );
+    } else {
+      statsPage = (
         <div className="league-analysis-page">
           <div className="page-title">
             <h2>{view}</h2>
@@ -419,6 +447,7 @@ const LeagueAnalysis = () => {
           />
         </div>
       );
+    }
 
     returnedPage = (
       <div>

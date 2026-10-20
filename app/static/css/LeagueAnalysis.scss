@@ -29,3 +29,81 @@
     padding-top: 100px;
     width: 50%;
 }
+
+.head-to-head-wrapper {
+    overflow-x: auto;
+    // Room for the last rotated header to lean into
+    padding-right: 140px;
+}
+
+$h2h-cell-width: 64px;
+$h2h-total-width: 88px;
+
+.head-to-head-table {
+    width: auto;
+
+    th, td {
+        text-align: center;
+        white-space: nowrap;
+    }
+
+    td {
+        width: $h2h-cell-width;
+        min-width: $h2h-cell-width;
+        max-width: $h2h-cell-width;
+    }
+
+    tbody th {
+        text-align: left;
+    }
+
+    .corner-cell {
+        vertical-align: bottom;
+        text-align: left;
+        border-width: 0 0 1px 0;
+    }
+
+    .rotated-header {
+        position: relative;
+        height: 150px;
+        width: $h2h-cell-width;
+        min-width: $h2h-cell-width;
+        max-width: $h2h-cell-width;
+        padding: 0;
+        border-width: 0 0 1px 0;
+
+        div {
+            position: absolute;
+            bottom: 8px;
+            left: 50%;
+            transform-origin: left bottom;
+            transform: rotate(-45deg);
+        }
+
+        span {
+            display: inline-block;
+            max-width: 190px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            vertical-align: bottom;
+        }
+    }
+
+    .total-cell {
+        width: $h2h-total-width;
+        min-width: $h2h-total-width;
+        max-width: $h2h-total-width;
+    }
+
+    td:last-child {
+        width: $h2h-total-width;
+        min-width: $h2h-total-width;
+        max-width: $h2h-total-width;
+        font-weight: bold;
+        border-left: 2px solid white;
+    }
+
+    .self-cell {
+        background-color: constants.$darkest;
+    }
+}

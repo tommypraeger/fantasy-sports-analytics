@@ -69,7 +69,53 @@ def export_league(league) -> dict:
             }
         )
 
+    league_dict["head_to_head"] = export_head_to_head(league)
+
     return league_dict
+
+
+def weekly_scores(league) -> dict:
+    """Map of team id -> {week: score} for weeks already played"""
+
+    scores = {team.id: {} for team in league.teams}
+    for matchup in league.matchups:
+        if matchup.week > league.curr_matchups_played:
+            continue
+        if matchup.home_score is None or matchup.away_score is None:
+            continue
+        scores[matchup.home_team_id][matchup.week] = matchup.home_score
+        scores[matchup.away_team_id][matchup.week] = matchup.away_score
+    return scores
+
+
+def export_head_to_head(league) -> dict:
+    """Export each team's record against every opponent if they had played every week"""
+
+    scores = weekly_scores(league)
+    teams = league.teams
+    # records[i][j] is team i's record against team j
+    records = []
+    for team in teams:
+        row = []
+        for opponent in teams:
+            if team.id == opponent.id:
+                row.append(None)
+                continue
+            wins = losses = ties = 0
+            for week, score in scores[team.id].items():
+                opponent_score = scores[opponent.id].get(week)
+                if opponent_score is None:
+                    continue
+                if score > opponent_score:
+                    wins += 1
+                elif score < opponent_score:
+                    losses += 1
+                else:
+                    ties += 1
+            row.append({"wins": wins, "losses": losses, "ties": ties})
+        records.append(row)
+
+    return {"teams": [team.name for team in teams], "records": records}
 
 
 def export_team(team, league) -> dict:
