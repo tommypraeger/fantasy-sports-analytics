@@ -92,30 +92,51 @@ def export_head_to_head(league) -> dict:
     """Export each team's record against every opponent if they had played every week"""
 
     scores = weekly_scores(league)
-    teams = league.teams
+    teams = sorted(
+        league.teams,
+        key=lambda team: cumulative_win_pct(team, league.teams, scores),
+        reverse=True,
+    )
     # records[i][j] is team i's record against team j
-    records = []
-    for team in teams:
-        row = []
-        for opponent in teams:
-            if team.id == opponent.id:
-                row.append(None)
-                continue
-            wins = losses = ties = 0
-            for week, score in scores[team.id].items():
-                opponent_score = scores[opponent.id].get(week)
-                if opponent_score is None:
-                    continue
-                if score > opponent_score:
-                    wins += 1
-                elif score < opponent_score:
-                    losses += 1
-                else:
-                    ties += 1
-            row.append({"wins": wins, "losses": losses, "ties": ties})
-        records.append(row)
+    records = [
+        [
+            None if team.id == opponent.id else head_to_head_record(team, opponent, scores)
+            for opponent in teams
+        ]
+        for team in teams
+    ]
 
     return {"teams": [team.name for team in teams], "records": records}
+
+
+def head_to_head_record(team, opponent, scores: dict) -> dict:
+    """Team's record against opponent if they had played every week"""
+
+    wins = losses = ties = 0
+    for week, score in scores[team.id].items():
+        opponent_score = scores[opponent.id].get(week)
+        if opponent_score is None:
+            continue
+        if score > opponent_score:
+            wins += 1
+        elif score < opponent_score:
+            losses += 1
+        else:
+            ties += 1
+    return {"wins": wins, "losses": losses, "ties": ties}
+
+
+def cumulative_win_pct(team, teams, scores: dict) -> float:
+    """Team's win percentage against every opponent, counting ties as half a win"""
+
+    wins = games = 0
+    for opponent in teams:
+        if opponent.id == team.id:
+            continue
+        record = head_to_head_record(team, opponent, scores)
+        wins += record["wins"] + record["ties"] / 2
+        games += record["wins"] + record["losses"] + record["ties"]
+    return wins / games if games else 0
 
 
 def export_team(team, league) -> dict:
