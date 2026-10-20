@@ -8,3 +8,5 @@ node_modules
 *.pyc
 app/dist
 app/static/js/api/v1/aws_credentials.js
+lambda_build
+app.zip

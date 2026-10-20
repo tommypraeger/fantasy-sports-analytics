@@ -1,10 +1,12 @@
 import json
+import os
 import unittest
 import application
 
 
 # Run like this: `python3 -m unittest test_lambda.py`
 # Must be in venv to run (first run `source venv/bin/activate`)
+# Set ESPN_S2 to an espn_s2 cookie to authenticate ESPN requests
 class TestLambda(unittest.TestCase):
     maxDiff = None
 
@@ -27,7 +29,7 @@ class TestLambda(unittest.TestCase):
         self.old_espn_league_id = '1667842'
         self.baseball_league_id = '58769671'
         self.basketball_league_id = '1436496933'
-        self.espn_s2 = 'AEA%2BWys%2B%2B93TnQkDxRuqJNTTBJzJflHeTboyroHLq12Z0Idl%2BFQP7fM4VLCmOa7U1UR0kVCKtmdkblitAYFLbHq7aA7SOXOQA%2BaXzCOXn6LhjMwfynESSpqOLykGymZfvf%2F4AfsVDm2fNa19fX%2BtH6xLnOcWv%2BAFBPiuERAhsACC0G05LNFgIaOxtmq42848gvH0mUJa6SUz1aA%2FI%2FExEBtEbQyQUQK2uuozIkYwMch2IOQ47AV0pw5Vr8%2FKkV4dwkm7g7HO1JnGjvgmVaddNid0BZdLtTGPjrv9n%2B0nK8uQew%3D%3D'
+        self.espn_s2 = os.environ.get('ESPN_S2', '')
         self.fake_platform = 'notespn'
         self.fake_league_id = 'fakeleagueid'
         self.fake_sport = 'foosball'
@@ -138,6 +140,7 @@ class TestLambda(unittest.TestCase):
             result = application.handle_league_analysis(self.event_map[event])
             self.assertEqual(result['errorMessage'], self.error_strings[event])
 
+    @unittest.skipUnless(os.environ.get('ESPN_S2'), 'ESPN_S2 is not set')
     def test_espn(self):
         error_events = ['espnbadyear', 'espnbadsport', 'espnbadleagueid', 'espnbads2']
         for event in error_events:
