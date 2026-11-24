@@ -100,7 +100,8 @@ def get_curr_matchups_played(league: LeagueModel) -> int:
 
     # Divide by number of teams to get number of matchups played
     # Multiply by 2 because 2 teams play each other
-    return played // league.num_teams * 2
+    # Multiply before dividing, otherwise odd weeks get rounded down
+    return played * 2 // league.num_teams
 
 
 # I slightly increase standard deviation to reduce the confidence of the predictions
